@@ -1,0 +1,25 @@
+#home #banners-home ul.slick-dots{
+    list-style:none;
+    position:absolute;
+    bottom:0px;
+    width:100%;
+    text-align:center;
+    font-size:0;
+}
+#home #banners-home ul.slick-dots li{
+    display:inline-block;
+    list-style:none;
+}
+#home #banners-home ul.slick-dots li button{
+    border-radius:50%;
+    border-width:0px;
+    width:12px;
+    height:12px;
+    background-color:#e12028;
+    margin:3px;
+    padding:0px;
+}
+#home #banners-home ul.slick-dots li.slick-active button{
+    background-color:#9d9989;
+}
+
