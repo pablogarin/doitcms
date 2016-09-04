@@ -69,6 +69,7 @@ class Compiler {
         return $tag;
     }
     public function getCompiledView(){
+        //TODO: check if si cached, else create it and save it to file...
         return "<!DOCTYPE html>".$this->parseRecursive($this->getDomsRecursive());
     }
 }
