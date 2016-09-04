@@ -60,6 +60,8 @@ class Compiler {
                         foreach( $dom['content'] as $child ){
                             $tag = str_replace("{{CHILD}}",$child, $tag);
                         }
+                    } else {
+                        $tag = str_replace("{{CHILD}}","", $tag);
                     }
                 }
             } else {
