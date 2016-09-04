@@ -1,5 +1,6 @@
 <?php
 namespace classes;
+include_once 'TableFactory.class.php';
 class Compiler {
     private $url;
     function __construct($url = "home"){
@@ -33,8 +34,15 @@ class Compiler {
         return $doms;
     }
     function parseRecursive($domTree){
+        global $dbh;
         foreach($domTree as $id=>$dom){
             $tag = "\n<".$dom['type'];
+            if( !empty($dom['domId']) ){
+                $tag.=" id=\"".$dom['domId']."\"";
+            }
+            if( !empty($dom['className']) ){
+                $tag.=" class=\"".$dom['className']."\"";
+            }
             if( isset($dom['atributes']) ){
                 foreach( $dom['atributes'] as $atr ){
                     $tag .= " ".$atr['name']."=\"".$atr['value']."\"";
@@ -49,12 +57,21 @@ class Compiler {
                     }
                     $tag = str_replace("{{CHILD}}",$content, $tag);
                 } else {
-                    // TODO: Insert content
-                    if( $dom['type']=="title" ){
-                        $dom['content'][] = "Titulo";
-                    }
-                    if( $dom['type']=="h1" ){
-                        $dom['content'][] = "Hola Mundo!";
+                    //TODO: place this on a factory class
+                    $contCur = $dbh->query("SELECT * FROM content WHERE id IN (SELECT idContent FROM content_dom WHERE idDom=?);",array($dom['id']));
+                    if( !empty($contCur) ){
+                        $table = $contCur[0]['tableName'];
+                        $keyName = $contCur[0]['keyName'];
+                        $keyValue = $contCur[0]['keyValue'];
+                        $content = $dbh->query("SELECT * FROM $table WHERE $keyName=?",array($keyValue));
+                        switch($table){
+                        case 'text':
+                            $dom['content'] = array($content[0]['body']);
+                            break;
+                        case 'section':
+                            $dom['content'] = array($content[0]['name']);
+                            break;
+                        }
                     }
                     if( isset($dom['content']) && !empty($dom['content']) ){
                         foreach( $dom['content'] as $child ){

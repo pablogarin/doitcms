@@ -1,4 +1,4 @@
-INSERT INTO zona(id,nombre,codigo,padre) VALUES
+INSERT INTO zone(id,name,code,parent) VALUES
 (-1,'Mundo','N/A',-1),
 (1,'Australia','AU',-1),
 (2,'China','CN',-1),
@@ -333,7 +333,7 @@ INSERT INTO zona(id,nombre,codigo,padre) VALUES
 (331,'Pica','',270),
 (332,'Antofagasta','',271);
 -- GO
-INSERT INTO zona(id,nombre,codigo,padre) VALUES
+INSERT INTO zone(id,name,code,parent) VALUES
 (333,'Mejillones','',271),
 (334,'Sierra Gorda','',271),
 (335,'Taltal','',271),
