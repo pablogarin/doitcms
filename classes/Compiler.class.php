@@ -34,7 +34,7 @@ class Compiler {
     }
     function parseRecursive($domTree){
         foreach($domTree as $id=>$dom){
-            $tag = "<".$dom['type'];
+            $tag = "\n<".$dom['type'];
             if( isset($dom['atributes']) ){
                 foreach( $dom['atributes'] as $atr ){
                     $tag .= " ".$atr['name']."=\"".$atr['value']."\"";
@@ -51,7 +51,7 @@ class Compiler {
                 } else {
                     // TODO: Insert content
                     if( $dom['type']=="title" ){
-                        $dom['content'][] = "Hola Mundo!";
+                        $dom['content'][] = "Titulo";
                     }
                     if( $dom['type']=="h1" ){
                         $dom['content'][] = "Hola Mundo!";
@@ -63,13 +63,13 @@ class Compiler {
                     }
                 }
             } else {
-                $tag .= "/>\n";
+                $tag .= "/>";
             }
         }
         return $tag;
     }
     public function getCompiledView(){
-        return $this->parseRecursive($this->getDomsRecursive());
+        return "<!DOCTYPE html>".$this->parseRecursive($this->getDomsRecursive());
     }
 }
 
