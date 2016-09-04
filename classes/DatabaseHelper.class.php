@@ -7,6 +7,7 @@ define("SQLITE", 1);
 define("MYSQL", 2);
 class SQLHelper extends PDO{
     private $mode, $connectionString, $error, $lastId;
+    private static $instance;
 
     public function __construct( $mode = MYSQL ){
         $this->mode = $mode;
@@ -41,6 +42,12 @@ class SQLHelper extends PDO{
             break;
         }
         $this->checkDatabase();
+    }
+    public static function getInstance(){
+        if( static::$instance === null ){
+            static::$instance = new SQLHelper();
+        }
+        return static::$instance;
     }
     public function query($query,$data=null){
         $result = array();
