@@ -1,6 +1,5 @@
 <?php
 require_once 'common.php';
-
-echo "INDEX";
-
+$compiler = new \classes\Compiler();
+print $compiler->getCompiledView();
 ?>

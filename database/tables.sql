@@ -9,7 +9,7 @@ CREATE TABLE dom(
 );
 CREATE TABLE atribute(
     id INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    name VARCHAR(120) UNIQUE NOT NULL,
+    name VARCHAR(120) NOT NULL,
     value VARCHAR(120) NOT NULL
 );
 CREATE TABLE dom_atribute(
@@ -17,11 +17,6 @@ CREATE TABLE dom_atribute(
     idDom INTEGER NOT NULL REFERENCES dom(id),
     idAtribute INTEGER NOT NULL REFERENCES atribute(id)
 );
-/*
-CREATE TABLE content(
-
-);
-*/
 CREATE TABLE zona(
     id INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL,
     nombre varchar(255) NOT NULL,

@@ -97,6 +97,7 @@ class SQLHelper extends PDO{
             break;
         case 2:
             $this->readSQLFile($cmds, PATH."/database/tables.sql");
+            $this->readSQLFile($cmds, PATH."/database/initdata.sql");
             break;
         }
         // leer archivo con zonas
