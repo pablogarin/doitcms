@@ -33,10 +33,14 @@ class Compiler {
         }
         return $doms;
     }
-    function parseRecursive($domTree){
+    function parseRecursive($domTree, $tab =""){
         global $dbh;
+        $tab .= "\t";
         foreach($domTree as $id=>$dom){
-            $tag = "\n<".$dom['type'];
+            $tag = "";
+            if($dom['id']!='-1')
+                $tag .= "$tab";
+            $tag .= "<".$dom['type'];
             if( !empty($dom['domId']) ){
                 $tag.=" id=\"".$dom['domId']."\"";
             }
@@ -49,11 +53,14 @@ class Compiler {
                 }
             }
             if( $dom['closeTag'] ){
-                $tag .= ">{{CHILD}}</".$dom['type'].">";
+                if($dom['id']!='-1')
+                    $tag .= ">\n{{CHILD}}$tab</".$dom['type'].">";
+                else
+                    $tag .= ">\n{{CHILD}}</".$dom['type'].">";
                 $content = "";
                 if( isset($dom['hijos']) && !empty($dom['hijos']) ){
                     foreach( $dom['hijos'] as $child ){
-                        $content .= $this->parseRecursive($child);
+                        $content .= $this->parseRecursive($child, $tab);
                     }
                     $tag = str_replace("{{CHILD}}",$content, $tag);
                 } else {
@@ -75,21 +82,22 @@ class Compiler {
                     }
                     if( isset($dom['content']) && !empty($dom['content']) ){
                         foreach( $dom['content'] as $child ){
-                            $tag = str_replace("{{CHILD}}",$child, $tag);
+                            $tag = str_replace("\n{{CHILD}}$tab","$child", $tag);
                         }
                     } else {
-                        $tag = str_replace("{{CHILD}}","", $tag);
+                        $tag = str_replace("\n{{CHILD}}$tab","", $tag);
                     }
                 }
             } else {
                 $tag .= "/>";
             }
         }
+        $tag .="\n";
         return $tag;
     }
     public function getCompiledView(){
         //TODO: check if si cached, else create it and save it to file...
-        return "<!DOCTYPE html>".$this->parseRecursive($this->getDomsRecursive());
+        return "<!DOCTYPE html>\n".$this->parseRecursive($this->getDomsRecursive());
     }
 }
 
