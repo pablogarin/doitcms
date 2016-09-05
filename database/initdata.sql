@@ -25,7 +25,10 @@ INSERT INTO dom(id,type,domId,className,closeTag,parentDom,domOrder) VALUES
 (23,'a','','navbar-brand',true,16,0.1),
 (24,'ul','','nav navbar-nav',true,17,0.1),
 (25,'li','','active',true,24,0.1),
-(26,'a','','',true,25,0.1);
+(26,'a','','',true,25,0.1),
+(27,'link','','',false,1,0.6),
+(28,'link','','',false,1,0.7),
+(29,'script','','',true,2,0.99);
 -- GO
 INSERT INTO atribute(id,name,value) VALUES
 (1,'lang','es'),
@@ -44,7 +47,12 @@ INSERT INTO atribute(id,name,value) VALUES
 (14,'aria-expanded','false'),
 (15,'aria-controls','navbar'),
 (16,'href','#'),
-(17,'href','{{url}}');
+(17,'href','{{url}}'),
+(18,'href','/css/font-awesome.min.css'),
+(19,'href','/css/styles.css'),
+(20,'rel','stylesheet'),
+(21,'rel','stylesheet'),
+(22,'src','/js/script.js');
 -- GO
 INSERT INTO dom_atribute(idDom,idAtribute) VALUES
 (3,2),
@@ -62,7 +70,48 @@ INSERT INTO dom_atribute(idDom,idAtribute) VALUES
 (18,14),
 (18,15),
 (23,16),
-(26,17);
+(26,17),
+(27,18),
+(27,20),
+(28,19),
+(28,21),
+(29,22);
+-- GO
+INSERT INTO template(id, name, description) VALUES
+(-1, 'layout', 'HTML Base del sitio.'),
+(1, 'home', 'Home del sitio.');
+-- GO
+INSERT INTO template_dom(idTemplate, idDom) VALUES
+(-1,-1),
+(-1,1),
+(-1,2),
+(-1,3),
+(-1,4),
+(-1,5),
+(-1,6),
+(-1,7),
+(-1,8),
+(-1,9),
+(-1,10),
+(-1,11),
+(-1,12),
+(-1,15),
+(-1,16),
+(-1,17),
+(-1,18),
+(-1,19),
+(-1,20),
+(-1,21),
+(-1,22),
+(-1,23),
+(-1,24),
+(-1,25),
+(-1,26),
+(-1,27),
+(-1,28),
+(-1,29),
+(1,13),
+(1,14);
 -- GO
 INSERT INTO section(id,name,parentSection,sectionOrder,active) VALUES
 (-1,'Home',-1,0.00,true);
