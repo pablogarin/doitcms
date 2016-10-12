@@ -1,168 +1,833 @@
-/*
- * Script sitio Frutek
- * */
-var url = "http://follert.neversaynever.cl"
-var title = $("title").text();
-var content = $("#main-content").html();
 $(document).ready(function(evt){
-    /*
-    $("#main-nav li a, .link").on("click",function(evt){
-        $("#main-content > *,footer").fadeOut('fast');
-        evt.preventDefault();
-        loading();
-        var url = $(this).attr("href");
-        $("#main-content").load(url+" #main-content > *",null,function(data){
-            var title = $(data).filter("title").text();
-            var content = $(data).filter("#main-content").html();
-            document.title = title;
-            window.history.pushState({"html":content,"pageTitle":title},"", url);
-            $("#main-content > *,footer").fadeIn('fast');
-            loadEvents();
-            loading();
-        });
-    });
-    window.onpopstate = function(e){
-        if(e.state){
-            loading();
-            document.getElementById("main-content").innerHTML = e.state.html;
-            document.title = e.state.pageTitle;
-            loading();
-        } else {
-            loading();
-            document.getElementById("main-content").innerHTML = content;
-            document.title = title;
-            loading();
-        }
-        loadEvents();
-    };
-    //*/
-    loadEvents();
+    setEvents();
 });
-var slideFrase;
-function loadEvents(){
-    // ALL EVENTS
-    $("#proyectos .thumbs-container .thumb a").off("click");
-    $("#proyectos .thumbs-container .thumb a").on("click",function(e){
-        e.preventDefault();
-        var id = $(this).attr("data-rel");
-        loading();
-        $("#detalle-proyecto").load("/proyectos?id="+id+" #detalle-proyecto > *",null,function(){
-            $("#detalle-proyecto div.carousel").slick({
-                dots: false,
-                infinite: true,
-                autoplay: true,
-                autoplaySpeed: 5000,
-                slidesToShow: 1,
-                slidesToScroll: 1,
-                prevArrow:"#detalle-proyecto .slider-prev",
-                nextArrow:"#detalle-proyecto .slider-next",
-                fade: true,
-                cssEase: 'linear'
-            });
-            $("#detalle-proyecto").modal();
-        });
-    });
-    $("#detalle-proyecto").on('show.bs.modal', function(event){
-        loading();
-        setTimeout(function(){
-            $("#detalle-proyecto .carousel")[0].slick.setPosition();
-        },200);
-    });
-    /*
-    $("#proyectos .thumbs-container .thumb a").fancybox({
-        'transitionIn'  :   'elastic',
-        'transitionOut' :   'elastic',
-        'speedIn'       :   600, 
-        'speedOut'      :   200, 
-        'overlayShow'   :   false
-    });
-    //*/
-    $("nav#main-nav > ul > li > a").on("click",function(){
-        $("nav#main-nav > ul > li").removeClass("active");
-        $(this).parents("li:first").addClass("active");
-    });
-    $("#banners-home").slick({
-        dots: true,
-        infinite: true,
-        autoplay: true,
-        autoplaySpeed: 5000,
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        prevArrow:"#banner-home .slider-prev",
-        nextArrow:"#banner-home .slider-next",
-        fade: true,
-        cssEase: 'linear'
-    });
-    $("#clientes-carrousel > div.carousel").slick({
-        dots: false,
-        infinite: true,
-        autoplay: true,
-        autoplaySpeed: 5000,
-        slidesToShow: 5,
-        slidesToScroll: 1,
-        prevArrow:"#clientes-carrousel .slider-prev",
-        nextArrow:"#clientes-carrousel .slider-next"
-    });
-    $("#detalle-proyecto div.carousel").slick({
-        dots: false,
-        infinite: true,
-        autoplay: true,
-        autoplaySpeed: 5000,
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        prevArrow:"#detalle-proyecto .slider-prev",
-        nextArrow:"#detalle-proyecto .slider-next",
-        fade: true,
-        cssEase: 'linear'
-    });
-    slideFrase = setInterval(function(){
-        var active = $("#frases-slide div:first").clone();
-        active.removeClass('active');
-        active.css({'display':'none'});
-        $("#frases-slide div:first").fadeOut(666,function(){ 
-            $(this).remove();
-        });
-        $("#frases-slide div:nth-child(2)").fadeIn(666,function(){
-            $(this).addClass('active');
-        });
-        $("#frases-slide").append(active);
-    },3000);
-    /*
-    $("#frases-slide").slick({
-        dots: false,
-        infinite: true,
-        autoplay: true,
-        autoplaySpeed: 3000,
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        prevArrow:"#banner-home .slider-prev",
-        nextArrow:"#banner-home .slider-next",
-        fade: true,
-        cssEase: 'linear'
-    });
-    //*/
-    $("form[name='contacto']").on("submit",function(evt){
-        evt.preventDefault();
-        var data = $("form[name='contacto']").serialize();
+var verCount = 0; // contador de versiones
+var higCount = 0; // contador de highlights
+var detCount = 0; // contador de detalles
+var colCount = 0; // contador de colores
+var galCount = 0; // contador de galeria
+var atrCount = {'equipamiento':0,'performance':0,'seguridad':0,'precios':0}; // contador de atributos
+function setEvents(){
+    console.log("setEvents() called...");
+    // seteamos los contadores con el valor que corresponde
+    if( typeof $("input[name*='versiones']:last").attr("name") !== 'undefined' )
+        verCount = parseInt($("input[name*='versiones']:last").attr("name").split(/[\[\]]/)[1])+1;
+    if( typeof $("input[name*='highlights']:last").attr("name") !== 'undefined' )
+        higCount = parseInt($("input[name*='highlights']:last").attr("name").split(/[\[\]]/)[1])+1;
+    if( typeof $("input[name*='detalles']:last").attr("name") !== 'undefined' )
+        detCount = parseInt($("input[name*='detalles']:last").attr("name").split(/[\[\]]/)[1])+1;
+    if( typeof $("input[name*='colores[']:last").attr("name") !== 'undefined' )
+        colCount = parseInt($("input[name*='colores[']:last").attr("name").split(/[\[\]]/)[1])+1;
+    if( typeof $("input[name*='galerias[']:last").attr("name") !== 'undefined' )
+        galCount = parseInt($("input[name*='galerias[']:last").attr("name").split(/[\[\]]/)[1])+1;
+    for( cat in atrCount ){
+        if( typeof $("input[name*='atributos["+cat+"][']:last").attr("name") !== 'undefined' ){
+            var inpName = $("input[name*='atributos["+cat+"][']:last").attr("name").split(/[\[\]]+/);
+            console.log(inpName);
+            atrCount[cat] = parseInt(inpName[2])+1;
+        }
+    }
+    $("input[accept='image/*']").off("change");
+    $("input[accept='image/*']").on("change",function(evt){
+        console.log('uploading photo...');
+        var self = this;
+        var form = new FormData();
+        form.append('file',this.files[0]);
+        $(self).parents('div.thumb-loader:first').find('.thumb-container .loading').show();
         $.ajax({
-            url     : '/ajax/send.php',
-            method  : 'POST',
-            data    : data,
-            success : function(resp){
-                alert(resp);
+            url     : '/ajax/uploadPhoto.php',
+            data    : form,
+            type    : 'POST',
+            async   : false,
+            success : function (data) {
+                var imgTag = $(self).parents('div.thumb-loader:first').find('.thumb-container img');
+                imgTag.attr("src",("/assets/"+data.name)).css({'height':'auto'});
+                var imgTag = $(self).parents('div.thumb-loader:first').find('input[type=hidden]').val(data.name);
+            },
+            cache   : false,
+            contentType: false,
+            processData: false
+        }).done(function(){
+            $(self).parents('div.thumb-loader:first').find('.thumb-container .loading').hide();
+        });
+    });
+    $("button[name='add-version']").off("click");
+    $("button[name='add-version']").on("click",function(evt){
+        evt.preventDefault();
+        var btnPos = $(this).parents('tr:first');
+
+
+        var row = document.createElement("tr");
+        var td1 = document.createElement("td");
+        var td2 = document.createElement("td");
+        var td3 = document.createElement("td");
+        var td4 = document.createElement("td");
+
+        var nombre  = document.createElement("input");
+        nombre.type = "text";
+        nombre.name = "versiones["+verCount+"][nombre]";
+        td1.appendChild(nombre);
+        row.appendChild(td1);
+
+        var traccion = document.createElement('select');
+        traccion.name = "versiones["+verCount+"][traccion]";
+        $(traccion).append("<option value='4x2'>4X2</option>");
+        $(traccion).append("<option value='4x4'>4X4</option>");
+        td2.appendChild(traccion);
+        row.appendChild(td2);
+
+        var combustible = document.createElement('select');
+        combustible.name = "versiones["+verCount+"][combustible]";
+        $(combustible).append("<option value='bencina'>Bencina</option>");
+        $(combustible).append("<option value='diesel'>Diesel</option>");
+        td3.appendChild(combustible);
+        row.appendChild(td3);
+
+        var transmision = document.createElement('select');
+        transmision.name = "versiones["+verCount+"][transmision]";
+        $(transmision).append("<option value='automatica'>Autom&aacute;tica</option>");
+        $(transmision).append("<option value='mecanica'>Mec&aacute;nica</option>");
+        td4.appendChild(transmision);
+        row.appendChild(td4);
+
+        var tdDelete = document.createElement("td");
+        var button = document.createElement("a");
+        button.className = "btn btn-danger";
+        button.href = "#";
+        var icon = document.createElement('i');
+        icon.className = "fa fa-trash";
+        button.appendChild(icon);
+        tdDelete.appendChild(button);
+        row.appendChild(tdDelete);
+        $(button).on("click",function(){
+            $(this).parents('tr:first').animate({'opacity':'0'},333,function(){
+                $(this).remove();
+            });
+        });
+        
+        row.className='version';
+        
+        $(row).insertBefore(btnPos);
+    });
+    $(".edit-modelo").off("click");
+    $(".edit-modelo").on("click",function(evt){
+        $("#page-body .row").addClass("blured");
+        loading();
+        evt.preventDefault();
+        var id = $(this).attr("data-rel");
+        $("#form-modelo").load("/admin/modelos?edit="+id+" #form-modelo>*",function(){
+            //CALLBACK
+            loading();
+            $("#form-modelo").find('img.thumb-foto').each(function(k,v){
+                if( $(v).attr("src")!='' ){
+                    $(v).css({"height":"auto"});
+                }
+            });
+            setEvents();
+            $('#form-modelo').fadeIn(120,function(){
+                $("#page-body .row").removeClass("blured");
+                focusNombreModelo();
+            });
+        });
+    });
+    $("button[name='add-highlight']").off("click");
+    $("button[name='add-highlight']").on("click",function(evt){
+        evt.preventDefault();
+        var btnPos = $(this).parents('tr:first');
+
+        var row = document.createElement("tr");
+        var td1 = document.createElement("td");
+        var td2 = document.createElement("td");
+        var divTitulo = document.createElement("div");
+        divTitulo.className="hl-titulo";
+
+        var foto  = document.createElement("div");
+        foto.className = "thumb-loader";
+        var thumbContainer = document.createElement("div");
+        thumbContainer.className = "thumb-container";
+        var img = document.createElement('img');
+        img.className = "thumb-foto";
+        thumbContainer.appendChild(img);
+        var loading = document.createElement("span");
+        loading.className = "loading";
+        $(loading).html("<i class='fa fa-spinner fa-spin'></i>");
+        thumbContainer.appendChild(loading);
+        foto.appendChild(thumbContainer);
+        var hiddenInput = document.createElement('input');
+        hiddenInput.type = "hidden";
+        hiddenInput.name = "highlights["+higCount+"][foto]";
+        foto.appendChild(hiddenInput);
+        // <button class="btn btn-primary" onclick="$('input[name=highlights-foto1]').click();return false;"><i class="fa fa-upload"></i> Seleccionar...</button>
+        var button = document.createElement('button');
+        button.className = "btn btn-primary";
+        button.setAttribute("onclick","$('input[name=highlights-foto"+higCount+"]').click();return false;");
+        $(button).html('<i class="fa fa-upload"></i> Seleccionar...');
+        foto.appendChild(button);
+        // <input type="file" name="highlights-foto1" class="hidden" accept="image/*"/>
+        var fileInput = document.createElement('input');
+        fileInput.type = "file";
+        fileInput.accept = "image/*";
+        fileInput.className = "hidden";
+        fileInput.name = 'highlights-foto'+higCount;
+        foto.appendChild(fileInput);
+        divTitulo.appendChild(foto);
+
+        var titulo  = document.createElement("input");
+        titulo.type = "text";
+        titulo.name = "highlights["+higCount+"][titulo]";
+        titulo.placeholder = "Titulo";
+        divTitulo.appendChild(titulo);
+
+        var bajada  = document.createElement("input");
+        bajada.type = "text";
+        bajada.name = "highlights["+higCount+"][bajada]";
+        bajada.placeholder = "Bajada";
+        divTitulo.appendChild(bajada);
+
+        td1.appendChild(divTitulo);
+        row.appendChild(td1);
+
+        var texto  = document.createElement("textarea");
+        texto.name = "highlights["+higCount+"][texto]";
+        texto.className = "ckeditor";
+        td2.appendChild(texto);
+        row.appendChild(td2);
+
+        var tdDelete = document.createElement("td");
+        var button = document.createElement("a");
+        button.className = "btn btn-danger";
+        button.href = "#";
+        var icon = document.createElement('i');
+        icon.className = "fa fa-trash";
+        button.appendChild(icon);
+        tdDelete.appendChild(button);
+        row.appendChild(tdDelete);
+        $(button).on("click",function(){
+            $(this).parents('tr:first').animate({'opacity':'0'},333,function(){
+                $(this).remove();
+            });
+            // $(this).parents('tr:first').remove();
+        });
+        
+        row.className='highlight';
+        
+        $(row).insertBefore(btnPos);
+        setEvents();
+        CKEDITOR.replace(texto.name); 
+    });
+    $("button[name='add-detalle']").off("click");
+    $("button[name='add-detalle']").on("click",function(evt){
+        evt.preventDefault();
+        var btnpos = $(this).parents('tr:first');
+
+        var row = document.createElement("tr");
+        var td1 = document.createElement("td");
+        var td2 = document.createElement("td");
+        var td3 = document.createElement("td");
+        var td4 = document.createElement("td");
+        
+        /*
+        var foto  = document.createElement("input");
+        foto.type = "file";
+        foto.name = "detalles["+detCount+"][foto]";
+        //*/
+        var foto  = document.createElement("div");
+        foto.className = "thumb-loader";
+        var thumbcontainer = document.createElement("div");
+        thumbcontainer.className = "thumb-container";
+        var img = document.createElement('img');
+        img.className = "thumb-foto";
+        thumbcontainer.appendChild(img);
+        var loading = document.createElement("span");
+        loading.className = "loading";
+        $(loading).html("<i class='fa fa-spinner fa-spin'></i>");
+        thumbcontainer.appendChild(loading);
+        foto.appendChild(thumbcontainer);
+        var hiddenInput = document.createElement('input');
+        hiddenInput.type = "hidden";
+        hiddenInput.name = "detalles["+detCount+"][foto]";
+        foto.appendChild(hiddenInput);
+        // <button class="btn btn-primary" onclick="$('input[name=highlights-foto1]').click();return false;"><i class="fa fa-upload"></i> seleccionar...</button>
+        var button = document.createElement('button');
+        button.className = "btn btn-primary";
+        button.setAttribute("onclick","$('input[name=detalles-foto"+detCount+"]').click();return false;");
+        $(button).html('<i class="fa fa-upload"></i> seleccionar...');
+        foto.appendChild(button);
+        // <input type="file" name="highlights-foto1" class="hidden" accept="image/*"/>
+        var fileInput = document.createElement('input');
+        fileInput.type = "file";
+        fileInput.accept = "image/*";
+        fileInput.className = "hidden";
+        fileInput.name = 'detalles-foto'+detCount;
+        foto.appendChild(fileInput);
+        td1.appendChild(foto);
+        row.appendChild(td1);
+
+        var titulo  = document.createElement("input");
+        titulo.type = "text";
+        titulo.name = "detalles["+detCount+"][titulo]";
+        titulo.placeholder = "titulo";
+        td2.appendChild(titulo);
+        row.appendChild(td2);
+
+        var tipo  = document.createElement("select");
+        tipo.name = "detalles["+detCount+"][tipo]";
+        $(tipo).append("<option value='interior'>interior</option>");
+        $(tipo).append("<option value='exterior'>exterior</option>");
+        td3.appendChild(tipo);
+        row.appendChild(td3);
+
+        var texto  = document.createElement("textarea");
+        texto.name = "detalles["+detCount+"][texto]";
+        texto.className = "ckeditor";
+        td4.appendChild(texto);
+        row.appendChild(td4);
+
+        var tdDelete = document.createElement("td");
+        var button = document.createElement("a");
+        button.className = "btn btn-danger";
+        button.href = "#";
+        var icon = document.createElement('i');
+        icon.className = "fa fa-trash";
+        button.appendChild(icon);
+        tdDelete.appendChild(button);
+        row.appendChild(tdDelete);
+        $(button).on("click",function(){
+            $(this).parents('tr:first').animate({'opacity':'0'},333,function(){
+                $(this).remove();
+            });
+            // $(this).parents('tr:first').remove();
+        });
+        
+        row.className='detalle';
+        
+        $(row).insertBefore(btnpos);
+        setEvents();
+        CKEDITOR.replace(texto.name); 
+    });
+    $("button[name='add-color']").off("click");
+    $("button[name='add-color']").on("click",function(evt){
+        evt.preventDefault();
+        var btnPos = $(this).parents('tr:first');
+
+        var row = document.createElement("tr");
+        var td1 = document.createElement("td");
+        var td2 = document.createElement("td");
+
+        // BOTON
+        var divBoton = document.createElement("div");
+        var foto  = document.createElement("div");
+        foto.className = "thumb-loader";
+        var thumbContainer = document.createElement("div");
+        thumbContainer.className = "thumb-container";
+        var img = document.createElement('img');
+        img.className = "thumb-foto";
+        thumbContainer.appendChild(img);
+        var loading = document.createElement("span");
+        loading.className = "loading";
+        $(loading).html("<i class='fa fa-spinner fa-spin'></i>");
+        thumbContainer.appendChild(loading);
+        foto.appendChild(thumbContainer);
+        var hiddenInput = document.createElement('input');
+        hiddenInput.type = "hidden";
+        hiddenInput.name = "colores["+colCount+"][boton]";
+        foto.appendChild(hiddenInput);
+        var button = document.createElement('button');
+        button.className = "btn btn-primary";
+        button.setAttribute("onclick","$('input[name=botoncolores"+colCount+"]').click();return false;");
+        $(button).html('<i class="fa fa-upload"></i> Seleccionar...');
+        foto.appendChild(button);
+        var fileInput = document.createElement('input');
+        fileInput.type = "file";
+        fileInput.accept = "image/*";
+        fileInput.className = "hidden";
+        fileInput.name = 'botoncolores'+colCount;
+        foto.appendChild(fileInput);
+        divBoton.appendChild(foto);
+
+        td1.appendChild(divBoton);
+        row.appendChild(td1);
+
+        // FOTO
+        var divFoto = document.createElement("div");
+        var foto  = document.createElement("div");
+        foto.className = "thumb-loader";
+        var thumbContainer = document.createElement("div");
+        thumbContainer.className = "thumb-container";
+        var img = document.createElement('img');
+        img.className = "thumb-foto";
+        thumbContainer.appendChild(img);
+        var loading = document.createElement("span");
+        loading.className = "loading";
+        $(loading).html("<i class='fa fa-spinner fa-spin'></i>");
+        thumbContainer.appendChild(loading);
+        foto.appendChild(thumbContainer);
+        var hiddenInput = document.createElement('input');
+        hiddenInput.type = "hidden";
+        hiddenInput.name = "colores["+colCount+"][foto]";
+        foto.appendChild(hiddenInput);
+        var button = document.createElement('button');
+        button.className = "btn btn-primary";
+        button.setAttribute("onclick","$('input[name=fotocolores"+colCount+"]').click();return false;");
+        $(button).html('<i class="fa fa-upload"></i> Seleccionar...');
+        foto.appendChild(button);
+        var fileInput = document.createElement('input');
+        fileInput.type = "file";
+        fileInput.accept = "image/*";
+        fileInput.className = "hidden";
+        fileInput.name = 'fotocolores'+colCount;
+        foto.appendChild(fileInput);
+        divFoto.appendChild(foto);
+
+        td2.appendChild(divFoto);
+        row.appendChild(td2);
+
+        var tdDelete = document.createElement("td");
+        var button = document.createElement("a");
+        button.className = "btn btn-danger";
+        button.href = "#";
+        var icon = document.createElement('i');
+        icon.className = "fa fa-trash";
+        button.appendChild(icon);
+        tdDelete.appendChild(button);
+        row.appendChild(tdDelete);
+        $(button).on("click",function(){
+            $(this).parents('tr:first').animate({'opacity':'0'},333,function(){
+                $(this).remove();
+            });
+            // $(this).parents('tr:first').remove();
+        });
+        
+        row.className='color';
+        
+        $(row).insertBefore(btnPos);
+        setEvents();
+    });
+    $("button[name='add-galeria']").off("click");
+    $("button[name='add-galeria']").on("click",function(evt){
+        console.log("Agregar galeria");
+        evt.preventDefault();
+        var btnPos = $(this).parents('tr:first');
+
+        var row = document.createElement("tr");
+        var td1 = document.createElement("td");
+        var td2 = document.createElement("td");
+
+        // BOTON
+        var divBoton = document.createElement("div");
+        var foto  = document.createElement("div");
+        foto.className = "thumb-loader";
+        var thumbContainer = document.createElement("div");
+        thumbContainer.className = "thumb-container";
+        var img = document.createElement('img');
+        img.className = "thumb-foto";
+        thumbContainer.appendChild(img);
+        var loading = document.createElement("span");
+        loading.className = "loading";
+        $(loading).html("<i class='fa fa-spinner fa-spin'></i>");
+        thumbContainer.appendChild(loading);
+        foto.appendChild(thumbContainer);
+        var hiddenInput = document.createElement('input');
+        hiddenInput.type = "hidden";
+        hiddenInput.name = "galerias["+galCount+"][foto]";
+        foto.appendChild(hiddenInput);
+        var button = document.createElement('button');
+        button.className = "btn btn-primary";
+        button.setAttribute("onclick","$('input[name=uploadfotogal"+galCount+"]').click();return false;");
+        $(button).html('<i class="fa fa-upload"></i> Seleccionar...');
+        foto.appendChild(button);
+        var fileInput = document.createElement('input');
+        fileInput.type = "file";
+        fileInput.accept = "image/*";
+        fileInput.className = "hidden";
+        fileInput.name = 'uploadfotogal'+galCount;
+        foto.appendChild(fileInput);
+        divBoton.appendChild(foto);
+
+        td1.appendChild(divBoton);
+        row.appendChild(td1);
+
+        var tipo  = document.createElement("select");
+        tipo.name = "galerias["+galCount+"][tipo]";
+        $(tipo).append("<option value='interior'>interior</option>");
+        $(tipo).append("<option value='exterior'>exterior</option>");
+        td2.appendChild(tipo);
+
+        row.appendChild(td2);
+
+        var tdDelete = document.createElement("td");
+        var button = document.createElement("a");
+        button.className = "btn btn-danger";
+        button.href = "#";
+        var icon = document.createElement('i');
+        icon.className = "fa fa-trash";
+        button.appendChild(icon);
+        tdDelete.appendChild(button);
+        row.appendChild(tdDelete);
+        $(button).on("click",function(){
+            $(this).parents('tr:first').animate({'opacity':'0'},333,function(){
+                $(this).remove();
+            });
+            // $(this).parents('tr:first').remove();
+        });
+        
+        row.className='galeria';
+        
+        $(row).insertBefore(btnPos);
+        setEvents();
+    });
+    // todos los textarea.ckeditor inicializados
+    CKEDITOR.editorConfig = function( config ) {
+        config.language = 'es';
+        config.uiColor = '#F7B42C';
+        config.height = 300;
+        config.toolbarCanCollapse = true;
+    };
+    try{
+        $("textarea.ckeditor").each(function(k,v){ 
+            var name = v.name; 
+            CKEDITOR.replace(name); 
+        });
+    } catch(e){
+        console.log(e);
+    }
+    // eliminar
+    $(".del-highlight").off("click");
+    $(".del-highlight").on("click",function(evt){
+        var row = $(this).parents('tr:first');
+        evt.preventDefault();
+        loading();
+        $("#page-body .row").addClass("blured");
+        var id = $(this).attr("data-rel");
+        //*
+        $.ajax({
+            url     : '/ajax/delete.php',
+            data    : {table:'highlight',id:id},
+            success : function(data){
+                if(data.ok){
+                    row.remove();
+                }
             }
         }).done(function(){
-            $("form[name='contacto']")[0].reset();
+            loading();
+            $("#page-body .row").removeClass("blured");
         });
+        //*/
+    });
+    $(".del-detalle").off("click");
+    $(".del-detalle").on("click",function(evt){
+        var row = $(this).parents('tr:first');
+        evt.preventDefault();
+        loading();
+        $("#page-body .row").addClass("blured");
+        var id = $(this).attr("data-rel");
+        //*
+        $.ajax({
+            url     : '/ajax/delete.php',
+            data    : {table:'detalle',id:id},
+            success : function(data){
+                if(data.ok){
+                    row.remove();
+                }
+            }
+        }).done(function(){
+            loading();
+            $("#page-body .row").removeClass("blured");
+        });
+        //*/
+    });
+    $(".del-version").off("click");
+    $(".del-version").on("click",function(evt){
+        var row = $(this).parents('tr:first');
+        evt.preventDefault();
+        loading();
+        $("#page-body .row").addClass("blured");
+        var id = $(this).attr("data-rel");
+        //*
+        $.ajax({
+            url     : '/ajax/delete.php',
+            data    : {table:'version',id:id},
+            success : function(data){
+                if(data.ok){
+                    row.remove();
+                }
+            }
+        }).done(function(){
+            loading();
+            $("#page-body .row").removeClass("blured");
+        });
+        //*/
+    });
+    $(".del-color").off("click");
+    $(".del-color").on("click",function(evt){
+        var row = $(this).parents('tr:first');
+        evt.preventDefault();
+        loading();
+        $("#page-body .row").addClass("blured");
+        var id = $(this).attr("data-rel");
+        //*
+        $.ajax({
+            url     : '/ajax/delete.php',
+            data    : {table:'color',id:id},
+            success : function(data){
+                if(data.ok){
+                    row.remove();
+                }
+            }
+        }).done(function(){
+            loading();
+            $("#page-body .row").removeClass("blured");
+        });
+        //*/
+    });
+    $(".del-galeria").off("click");
+    $(".del-galeria").on("click",function(evt){
+        var row = $(this).parents('tr:first');
+        evt.preventDefault();
+        loading();
+        $("#page-body .row").addClass("blured");
+        var id = $(this).attr("data-rel");
+        //*
+        $.ajax({
+            url     : '/ajax/delete.php',
+            data    : {table:'galeria',id:id},
+            success : function(data){
+                if(data.ok){
+                    row.remove();
+                }
+            }
+        }).done(function(){
+            loading();
+            $("#page-body .row").removeClass("blured");
+        });
+        //*/
+    });
+    $("#add-performance").off("click");
+    $("#add-performance").on("click",function(evt){
+        var pos = $(this).parents('.row:first');
+        evt.preventDefault();
+        var count = 0;
+        var versions = [];
+        $("input[type='hidden'][name*='versiones[']").each(function(k,v){
+            var idVer = $(v).val();
+            versions.push("<input type='text' name='atributos[performance][nuevo-"+atrCount.performance+"]["+idVer+"]' >")
+            count++;
+        });
+        var row = "<div class='row'><div class='col-md-3'><input type='text' name='atributos[performance][nuevo-"+atrCount.performance+"][nombre]'></div>";
+        var colWidth = Math.floor(8/count); // 8 of 12 cols available -- PG
+        for( id in versions ){
+            var col = "<div class='col-md-"+colWidth+"'>"+versions[id]+"</div>";
+            row += col;
+        }
+        row+="<div class='col-md-1'><a href='#' class='btn btn-danger' onclick='return deleteRow(this);'><i class='fa fa-trash'></i></a></div>";
+        row+="</div><!-- /.row -->";
+        atrCount.performance++;
+        $(row).insertBefore(pos);
+    });
+    $("#add-equipamiento").off("click");
+    $("#add-equipamiento").on("click",function(evt){
+        var pos = $(this).parents('.row:first');
+        evt.preventDefault();
+        var count = 0;
+        var versions = [];
+        $("input[type='hidden'][name*='versiones[']").each(function(k,v){
+            var idVer = $(v).val();
+            versions.push("<input type='checkbox' name='atributos[equipamiento][nuevo-"+atrCount.equipamiento+"]["+idVer+"]' >")
+            count++;
+        });
+        var row = "<div class='row'><div class='col-md-3'><input type='text' name='atributos[equipamiento][nuevo-"+atrCount.equipamiento+"][nombre]'></div>";
+        var colWidth = Math.floor(8/count); // 8 of 12 cols available -- PG
+        for( id in versions ){
+            var col = "<div class='col-md-"+colWidth+"'>"+versions[id]+"</div>";
+            row += col;
+        }
+        row+="<div class='col-md-1'><a href='#' class='btn btn-danger' onclick='return deleteRow(this);'><i class='fa fa-trash'></i></a></div>";
+        row+="</div><!-- /.row -->";
+        atrCount.equipamiento++;
+        $(row).insertBefore(pos);
+    });
+    $("#add-seguridad").off("click");
+    $("#add-seguridad").on("click",function(evt){
+        var pos = $(this).parents('.row:first');
+        evt.preventDefault();
+        var count = 0;
+        var versions = [];
+        $("input[type='hidden'][name*='versiones[']").each(function(k,v){
+            var idVer = $(v).val();
+            versions.push("<input type='checkbox' name='atributos[seguridad][nuevo-"+atrCount.seguridad+"]["+idVer+"]' >")
+            count++;
+        });
+        var row = "<div class='row'><div class='col-md-3'><input type='text' name='atributos[seguridad][nuevo-"+atrCount.seguridad+"][nombre]'></div>";
+        var colWidth = Math.floor(8/count); // 8 of 12 cols available -- PG
+        for( id in versions ){
+            var col = "<div class='col-md-"+colWidth+"'>"+versions[id]+"</div>";
+            row += col;
+        }
+        row+="<div class='col-md-1'><a href='#' class='btn btn-danger' onclick='return deleteRow(this);'><i class='fa fa-trash'></i></a></div>";
+        row+="</div><!-- /.row -->";
+        atrCount.seguridad++;
+        $(row).insertBefore(pos);
+    });
+    $("#add-precio").off("click");
+    $("#add-precio").on("click",function(evt){
+        var pos = $(this).parents('.row:first');
+        evt.preventDefault();
+        var count = 0;
+        var versions = [];
+        $("input[type='hidden'][name*='versiones[']").each(function(k,v){
+            var idVer = $(v).val();
+            versions.push("<input type='text' name='atributos[precios][nuevo-"+atrCount.precios+"]["+idVer+"]' >")
+            count++;
+        });
+        var row = "<div class='row'><div class='col-md-3'><input type='text' name='atributos[precios][nuevo-"+atrCount.precios+"][nombre]'></div>";
+        var colWidth = Math.floor(8/count); // 8 of 12 cols available -- PG
+        for( id in versions ){
+            var col = "<div class='col-md-"+colWidth+"'>"+versions[id]+"</div>";
+            row += col;
+        }
+        row+="<div class='col-md-1'><a href='#' class='btn btn-danger' onclick='return deleteRow(this);'><i class='fa fa-trash'></i></a></div>";
+        row+="</div><!-- /.row -->";
+        atrCount.precios++;
+        $(row).insertBefore(pos);
+    });
+    $("#tabla-atributos .btn-danger").off("click");
+    $("#tabla-atributos .btn-danger").on("click",function(evt){
+        evt.preventDefault();
+        if( typeof $(this).attr("data-rel") !== 'undefined' ){
+            var row = $(this).parents('.row:first');
+            evt.preventDefault();
+            loading();
+            $("#page-body .row").addClass("blured");
+            var id = $(this).attr("data-rel");
+            $.ajax({
+                url     : '/ajax/delete.php',
+                data    : {table:'atributo',id:id},
+                success : function(data){
+                    if(data.ok){
+                        row.remove();
+                    }
+                }
+            }).done(function(){
+                loading();
+                $("#page-body .row").removeClass("blured");
+            });
+        }
+    });
+    $(".editar-accesorio").on("click",function(){
+        var id = $(this).attr("data-rel-id");
+        var cod = $(this).attr("data-rel-cod");
+        var nombre = $(this).attr("data-rel-nombre");
+        var foto = $(this).attr("data-rel-foto");
+        var modelo = $(this).attr("data-rel-modelo");
+        $("input[name='codigo']").val(cod);
+        $("input[name='nombre']").val(nombre);
+        $("input[name='foto']").val(foto);
+        $(".thumb-foto").attr("src","/assets/"+foto);
+        $("input[name='modelo']").val(modelo);
+        $(".modal").modal();
+        $("form [name='grabar']").val(id);
     });
 }
-var showingLoader = false;
-function loading(){
-    //TODO: loader spinner
-    if(showingLoader){
-        $.fancybox.hideLoading()
+function closeFormModelo(){
+    $("#form-modelo").fadeOut(120);
+    $("#form-modelo form input").val("");
+    $("#form-modelo form").find("img").each(function(k,v){
+        v.src='';
+        $(v).css({"width":"159px","height":""});
+    });
+    $("#form-modelo form").find("table tr.version").remove();
+    $("#form-modelo form").find("table tr.highlight").remove();
+    $("#form-modelo form").find("table tr.detalle").remove();
+    $("#form-modelo form").find("table tr.color").remove();
+    $("#form-modelo form input[name=id]").remove();
+    $("#form-modelo").scrollTop(0);
+    $("a[href='#panel-info']").click();
+    return false;
+}
+function openFormNoticia(id){
+    if( typeof id !== 'undefined' ){
+        //TODO: cargar noticia
+        $("#page-body .row").addClass("blured");
+        loading();
+        $("#form-noticia").load("/admin/lifestyle?edit="+id+" #form-noticia>*",function(){
+            //CALLBACK
+            loading();
+            $("#form-noticia").find('img.thumb-foto').each(function(k,v){
+                if( $(v).attr("src")!='' ){
+                    $(v).css({"height":"auto"});
+                }
+            });
+            setEvents();
+            $('#form-noticia').fadeIn(120,function(){
+                $("#page-body .row").removeClass("blured");
+            });
+        });
     } else {
-        $.fancybox.showLoading()
+        $("#form-noticia").fadeIn(120);
     }
-    showingLoader = !showingLoader;
+    return false;
+}
+function closeFormNoticia(){
+    $("#form-noticia").fadeOut(120);
+    return false;
+}
+var spinnerShowing = false;
+function loading(){
+    var show = !spinnerShowing;
+    if( show ){
+        var opts = {
+            lines: 17 // The number of lines to draw
+            , length: 56 // The length of each line
+            , width: 3 // The line thickness
+            , radius: 0 // The radius of the inner circle
+            , scale: 0.75 // Scales overall size of the spinner
+            , corners: 0.5 // Corner roundness (0..1)
+            , color: '#000' // #rgb or #rrggbb or array of colors
+            , opacity: 0.25 // Opacity of the lines
+            , rotate: 0 // The rotation offset
+            , direction: 1 // 1: clockwise, -1: counterclockwise
+            , speed: 1.1 // Rounds per second
+            , trail: 54 // Afterglow percentage
+            , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+            , zIndex: 2e9 // The z-index (defaults to 2000000000)
+            , className: 'spinner' // The CSS class to assign to the spinner
+            , top: '50%' // Top position relative to parent
+            , left: '50%' // Left position relative to parent
+            , shadow: false // Whether to render a shadow
+            , hwaccel: false // Whether to use hardware acceleration
+            , position: 'absolute' // Element positioning
+        }
+        var target = document.getElementById('page-body');
+        var spinner = new Spinner(opts).spin(target);
+    } else {
+        $(".spinner[role=progressbar]").remove();
+    }
+    spinnerShowing = show;
+}
+function focusNombreModelo(){
+    $("#nombre-modelo input").focus();
+    var strLength = $("#nombre-modelo input").val().length*2;
+    $("#nombre-modelo input")[0].setSelectionRange(strLength, strLength);;
+}
+function deleteRow(dom){
+    console.log(dom);
+    var delRow = $(dom).parents(".row:first");
+    delRow.fadeOut(120,function(){
+        delRow.remove();
+    });
+    return false;
+}
+var historias = 0;
+function agregarHistoria(){
+    var content = '<tr><td><input type="text" name="historias[nuevo-'+historias+'][fecha]"/></td><td><div class="thumb-loader"><div class="thumb-container"><img src="" class="thumb-foto" alt="Foto Historia" /><span class="loading"><i class="fa fa-spinner fa-spin"></i></span></div><input type="hidden" name="historias[nuevo-'+historias+'][foto]" /><button class="btn btn-primary" onclick="$(\'input[name=fotoupload-'+historias+']\').click();return false;"><i class="fa fa-upload"></i> Seleccionar...</button><input type="file" name="fotoupload-'+historias+'" class="hidden" accept="image/*"/></div></td><td><textarea class="ckeditor" name="historias[nuevo-'+historias+'][texto]"></textarea></td><td><a href="#" class="btn btn-danger del-historia"><i class="fa fa-trash"></i></a></td></tr>';
+    $("#table-historias").append(content);
+    setEvents();
+    CKEDITOR.replace("historias[nuevo-"+historias+"][texto]"); 
+    historias++;
+}
+function clearForm(){
+    $("form")[0].reset();
+    $("form input[type='hidden']").val("");
+    $("form img").attr("src","/assets/sin-imagen.jpg");
+    $("form [name='grabar']").val("nuevo");
 }

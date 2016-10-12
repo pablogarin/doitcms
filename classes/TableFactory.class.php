@@ -6,7 +6,6 @@ class TableFactory {
             throw new Exception("You must define a table.");
             exit;
         }
-
     }
 }
 ?>

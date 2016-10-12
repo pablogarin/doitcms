@@ -8,6 +8,9 @@ $path = $_SERVER['DOCUMENT_ROOT'];
 $path = str_replace('/html','',$path);
 ini_set('include_path', ini_get('include_path').PATH_SEPARATOR.$path);
 
+$html = $path."/html";
+ini_set('include_path', ini_get('include_path').PATH_SEPARATOR.$html);
+
 $classes = $path."/classes";
 ini_set('include_path', ini_get('include_path').PATH_SEPARATOR.$classes);
 
@@ -32,4 +35,8 @@ include_once 'connect.php';
 include_once 'models.php';
 include_once 'classes.php';
 include_once 'functions.php';
+
+$view = new View();
+$view->setFolder(PATH."/templates");
+
 ?>

@@ -10,8 +10,8 @@ INSERT INTO dom(id,type,domId,className,closeTag,parentDom,domOrder) VALUES
 (8,'div','','container',true,2,0.1),
 (9,'nav','','navbar navbar-default',true,8,0.1),
 (10,'div','main-content','container-fluid',true,8,0.2),
-(11,'script','','',true,2,0.99),
-(12,'script','','',true,2,0.99),
+(11,'script','','',true,2,0.97),
+(12,'script','','',true,2,0.97),
 (13,'div','','row',true,10,0.1),
 (14,'h1','','col-md-12 text-center',true,13,0.1),
 (15,'div','','container-fluid',true,9,0.1),
@@ -28,7 +28,8 @@ INSERT INTO dom(id,type,domId,className,closeTag,parentDom,domOrder) VALUES
 (26,'a','','',true,25,0.1),
 (27,'link','','',false,1,0.6),
 (28,'link','','',false,1,0.7),
-(29,'script','','',true,2,0.99);
+(29,'script','','',true,2,0.98),
+(30,'script','','',true,2,0.99);
 -- GO
 INSERT INTO atribute(id,name,value) VALUES
 (1,'lang','es'),
@@ -52,7 +53,8 @@ INSERT INTO atribute(id,name,value) VALUES
 (19,'href','/css/styles.css'),
 (20,'rel','stylesheet'),
 (21,'rel','stylesheet'),
-(22,'src','/js/script.js');
+(22,'src','/js/spin.min.js'),
+(23,'src','/js/script.js');
 -- GO
 INSERT INTO dom_atribute(idDom,idAtribute) VALUES
 (3,2),
@@ -75,7 +77,9 @@ INSERT INTO dom_atribute(idDom,idAtribute) VALUES
 (27,20),
 (28,19),
 (28,21),
-(29,22);
+(29,22),
+(30,23);
+-- GO
 -- GO
 INSERT INTO template(id, name, description) VALUES
 (-1, 'layout', 'HTML Base del sitio.'),
@@ -110,6 +114,7 @@ INSERT INTO template_dom(idTemplate, idDom) VALUES
 (-1,27),
 (-1,28),
 (-1,29),
+(-1,30),
 (1,13),
 (1,14);
 -- GO

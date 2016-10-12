@@ -3,31 +3,44 @@ namespace classes;
 include_once 'TableFactory.class.php';
 class Compiler {
     private $url;
+    private $doms;
+
     function __construct($url = "home"){
+        global $dbh;
         $this->url = $url;
+        $cur = $dbh->query("SELECT idDom FROM template_dom WHERE idTemplate=-1 or idTemplate=(select id from template where name=?);",array($url));
+        if( !empty($cur) ){
+            $doms = array();
+            foreach( $cur as $row ){
+                $doms[] = $row['idDom'];
+            }
+            $this->doms = $doms;
+        }
     }
     function getDomsRecursive( $id = -1, $doms=array() ){
         global $dbh;
-        $cur = $dbh->query("SELECT * FROM dom WHERE id=? order by domOrder;",array($id));
-        if( empty($cur) ){
-            return false;
-        }
-        foreach($cur as $dom){
-            $subCur = $dbh->query("SELECT * FROM atribute WHERE id IN (SELECT idAtribute FROM dom_atribute WHERE idDom=?);", array($dom['id']));
-            if( !empty($subCur) ){
-                foreach($subCur as $atr){
-                    if( !isset($dom['atributes']) ){
-                        $dom['atributes'] = array();
-                    }
-                    $dom['atributes'][] = $atr;
-                }
+        if( in_array($id, $this->doms )){
+            $cur = $dbh->query("SELECT * FROM dom WHERE id=? order by domOrder;",array($id));
+            if( empty($cur) ){
+                return false;
             }
-            $doms[$dom['id']] = $dom;
-            $subCur = $dbh->query("SELECT * FROM dom WHERE id!=? AND parentDom=?;",array($id, $id));
-            if( !empty($subCur) ){
-                $doms[$dom['id']]['hijos'] = array();
-                foreach( $subCur as $child ){
-                    $doms[$dom['id']]['hijos'][$child['id']] = $this->getDomsRecursive($child['id']);
+            foreach($cur as $dom){
+                $subCur = $dbh->query("SELECT * FROM atribute WHERE id IN (SELECT idAtribute FROM dom_atribute WHERE idDom=?);", array($dom['id']));
+                if( !empty($subCur) ){
+                    foreach($subCur as $atr){
+                        if( !isset($dom['atributes']) ){
+                            $dom['atributes'] = array();
+                        }
+                        $dom['atributes'][] = $atr;
+                    }
+                }
+                $doms[$dom['id']] = $dom;
+                $subCur = $dbh->query("SELECT * FROM dom WHERE id!=? AND parentDom=?;",array($id, $id));
+                if( !empty($subCur) ){
+                    $doms[$dom['id']]['hijos'] = array();
+                    foreach( $subCur as $child ){
+                        $doms[$dom['id']]['hijos'][$child['id']] = $this->getDomsRecursive($child['id']);
+                    }
                 }
             }
         }
@@ -97,6 +110,7 @@ class Compiler {
     }
     public function getCompiledView(){
         //TODO: check if si cached, else create it and save it to file...
+        //print_r($this->getDomsRecursive());exit;
         return "<!DOCTYPE html>\n".$this->parseRecursive($this->getDomsRecursive());
     }
 }
