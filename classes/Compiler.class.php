@@ -40,6 +40,12 @@ class Compiler {
                     $doms[$dom['id']]['hijos'] = array();
                     foreach( $subCur as $child ){
                         $doms[$dom['id']]['hijos'][$child['id']] = $this->getDomsRecursive($child['id']);
+                        if( empty($doms[$dom['id']]['hijos'][$child['id']]) ){
+                            unset($doms[$dom['id']]['hijos'][$child['id']]);
+                        }
+                    }
+                    if( empty($doms[$dom['id']]['hijos']) ){
+                        unset($doms[$dom['id']]['hijos']);
                     }
                 }
             }
