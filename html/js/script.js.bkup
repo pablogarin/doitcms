@@ -1,0 +1,459 @@
+$(document).ready(function(evt){
+    setEvents();
+});
+var verCount = 0;
+var higCount = 0;
+var detCount = 0;
+var colCount = 0;
+function setEvents(){
+    console.log("setEvents() called...");
+    if( typeof $("input[name*='versiones']:last").attr("name") !== 'undefined' )
+        verCount = parseInt($("input[name*='versiones']:last").attr("name").split(/[\[\]]/)[1])+1;
+    if( typeof $("input[name*='highlights']:last").attr("name") !== 'undefined' )
+        higCount = parseInt($("input[name*='highlights']:last").attr("name").split(/[\[\]]/)[1])+1;
+    if( typeof $("input[name*='detalles']:last").attr("name") !== 'undefined' )
+        detCount = parseInt($("input[name*='detalles']:last").attr("name").split(/[\[\]]/)[1])+1;
+    if( typeof $("input[name*='colores[']:last").attr("name") !== 'undefined' )
+        colCount = parseInt($("input[name*='colores[']:last").attr("name").split(/[\[\]]/)[1])+1;
+    $("input[accept='image/*']").off("change");
+    $("input[accept='image/*']").on("change",function(evt){
+        console.log('uploading photo...');
+        var self = this;
+        var form = new FormData();
+        form.append('file',this.files[0]);
+        $(self).parents('div.thumb-loader:first').find('.thumb-container .loading').show();
+        $.ajax({
+            url     : '/ajax/uploadPhoto.php',
+            data    : form,
+            type    : 'POST',
+            async   : false,
+            success : function (data) {
+                var imgTag = $(self).parents('div.thumb-loader:first').find('.thumb-container img');
+                imgTag.attr("src",("/assets/"+data.name)).css({'height':'auto'});
+                var imgTag = $(self).parents('div.thumb-loader:first').find('input[type=hidden]').val(data.name);
+            },
+            cache   : false,
+            contentType: false,
+            processData: false
+        }).done(function(){
+            $(self).parents('div.thumb-loader:first').find('.thumb-container .loading').hide();
+        });
+    });
+    $("button[name='add-version']").off("click");
+    $("button[name='add-version']").on("click",function(evt){
+        evt.preventDefault();
+        var btnPos = $(this).parents('tr:first');
+
+
+        var row = document.createElement("tr");
+        var td1 = document.createElement("td");
+        var td2 = document.createElement("td");
+        var td3 = document.createElement("td");
+        var td4 = document.createElement("td");
+
+        var nombre  = document.createElement("input");
+        nombre.type = "text";
+        nombre.name = "versiones["+verCount+"][nombre]";
+        td1.appendChild(nombre);
+        row.appendChild(td1);
+
+        var traccion = document.createElement('select');
+        traccion.name = "versiones["+verCount+"][traccion]";
+        $(traccion).append("<option value='4x2'>4X2</option>");
+        $(traccion).append("<option value='4x4'>4X4</option>");
+        td2.appendChild(traccion);
+        row.appendChild(td2);
+
+        var combustible = document.createElement('select');
+        combustible.name = "versiones["+verCount+"][combustible]";
+        $(combustible).append("<option value='bencina'>Bencina</option>");
+        $(combustible).append("<option value='diesel'>Diesel</option>");
+        td3.appendChild(combustible);
+        row.appendChild(td3);
+
+        var transmision = document.createElement('select');
+        transmision.name = "versiones["+verCount+"][transmision]";
+        $(transmision).append("<option value='automatica'>Autom&aacute;tica</option>");
+        $(transmision).append("<option value='mecanica'>Mec&aacute;nica</option>");
+        td4.appendChild(transmision);
+        row.appendChild(td4);
+
+        var tdDelete = document.createElement("td");
+        var button = document.createElement("a");
+        button.className = "btn btn-danger";
+        button.href = "#";
+        var icon = document.createElement('i');
+        icon.className = "fa fa-trash";
+        button.appendChild(icon);
+        tdDelete.appendChild(button);
+        row.appendChild(tdDelete);
+        $(button).on("click",function(){
+            $(this).parents('tr:first').animate({'opacity':'0'},333,function(){
+                $(this).remove();
+            });
+        });
+        
+        row.className='version';
+        
+        $(row).insertBefore(btnPos);
+    });
+    $(".edit-modelo").off("click");
+    $(".edit-modelo").on("click",function(evt){
+        loading();
+        evt.preventDefault();
+        var id = $(this).attr("data-rel");
+        $("#form-modelo").load("/admin/modelos?edit="+id+" #form-modelo>*",function(){
+            //CALLBACK
+            loading();
+            $("#form-modelo").find('img.thumb-foto').each(function(k,v){
+                if( $(v).attr("src")!='' ){
+                    $(v).css({"height":"auto"});
+                }
+            });
+            setEvents();
+            $('#form-modelo').fadeIn(120);
+            focusNombreModelo();
+        });
+    });
+    $("button[name='add-highlight']").off("click");
+    $("button[name='add-highlight']").on("click",function(evt){
+        evt.preventDefault();
+        var btnPos = $(this).parents('tr:first');
+
+        var row = document.createElement("tr");
+        var td1 = document.createElement("td");
+        var td2 = document.createElement("td");
+        var divTitulo = document.createElement("div");
+        divTitulo.className="hl-titulo";
+
+        var foto  = document.createElement("div");
+        foto.className = "thumb-loader";
+        var thumbContainer = document.createElement("div");
+        thumbContainer.className = "thumb-container";
+        var img = document.createElement('img');
+        img.className = "thumb-foto";
+        thumbContainer.appendChild(img);
+        var loading = document.createElement("span");
+        loading.className = "loading";
+        $(loading).html("<i class='fa fa-spinner fa-spin'></i>");
+        thumbContainer.appendChild(loading);
+        foto.appendChild(thumbContainer);
+        var hiddenInput = document.createElement('input');
+        hiddenInput.type = "hidden";
+        hiddenInput.name = "highlights["+higCount+"][foto]";
+        foto.appendChild(hiddenInput);
+        // <button class="btn btn-primary" onclick="$('input[name=highlights-foto1]').click();return false;"><i class="fa fa-upload"></i> Seleccionar...</button>
+        var button = document.createElement('button');
+        button.className = "btn btn-primary";
+        button.setAttribute("onclick","$('input[name=highlights-foto"+higCount+"]').click();return false;");
+        $(button).html('<i class="fa fa-upload"></i> Seleccionar...');
+        foto.appendChild(button);
+        // <input type="file" name="highlights-foto1" class="hidden" accept="image/*"/>
+        var fileInput = document.createElement('input');
+        fileInput.type = "file";
+        fileInput.accept = "image/*";
+        fileInput.className = "hidden";
+        fileInput.name = 'highlights-foto'+higCount;
+        foto.appendChild(fileInput);
+        divTitulo.appendChild(foto);
+
+        var titulo  = document.createElement("input");
+        titulo.type = "text";
+        titulo.name = "highlights["+higCount+"][titulo]";
+        titulo.placeholder = "Titulo";
+        divTitulo.appendChild(titulo);
+
+        var bajada  = document.createElement("input");
+        bajada.type = "text";
+        bajada.name = "highlights["+higCount+"][bajada]";
+        bajada.placeholder = "Bajada";
+        divTitulo.appendChild(bajada);
+
+        td1.appendChild(divTitulo);
+        row.appendChild(td1);
+
+        var texto  = document.createElement("textarea");
+        texto.name = "highlights["+higCount+"][texto]";
+        texto.className = "ckeditor";
+        td2.appendChild(texto);
+        row.appendChild(td2);
+
+        var tdDelete = document.createElement("td");
+        var button = document.createElement("a");
+        button.className = "btn btn-danger";
+        button.href = "#";
+        var icon = document.createElement('i');
+        icon.className = "fa fa-trash";
+        button.appendChild(icon);
+        tdDelete.appendChild(button);
+        row.appendChild(tdDelete);
+        $(button).on("click",function(){
+            $(this).parents('tr:first').animate({'opacity':'0'},333,function(){
+                $(this).remove();
+            });
+            // $(this).parents('tr:first').remove();
+        });
+        
+        row.className='highlight';
+        
+        $(row).insertBefore(btnPos);
+        setEvents();
+        CKEDITOR.replace(texto.name); 
+    });
+    $("button[name='add-detalle']").off("click");
+    $("button[name='add-detalle']").on("click",function(evt){
+        evt.preventDefault();
+        var btnpos = $(this).parents('tr:first');
+
+        var row = document.createElement("tr");
+        var td1 = document.createElement("td");
+        var td2 = document.createElement("td");
+        var td3 = document.createElement("td");
+        var td4 = document.createElement("td");
+        
+        /*
+        var foto  = document.createElement("input");
+        foto.type = "file";
+        foto.name = "detalles["+detCount+"][foto]";
+        //*/
+        var foto  = document.createElement("div");
+        foto.className = "thumb-loader";
+        var thumbcontainer = document.createElement("div");
+        thumbcontainer.className = "thumb-container";
+        var img = document.createElement('img');
+        img.className = "thumb-foto";
+        thumbcontainer.appendChild(img);
+        var loading = document.createElement("span");
+        loading.className = "loading";
+        $(loading).html("<i class='fa fa-spinner fa-spin'></i>");
+        thumbcontainer.appendChild(loading);
+        foto.appendChild(thumbcontainer);
+        var hiddenInput = document.createElement('input');
+        hiddenInput.type = "hidden";
+        hiddenInput.name = "detalles["+detCount+"][foto]";
+        foto.appendChild(hiddenInput);
+        // <button class="btn btn-primary" onclick="$('input[name=highlights-foto1]').click();return false;"><i class="fa fa-upload"></i> seleccionar...</button>
+        var button = document.createElement('button');
+        button.className = "btn btn-primary";
+        button.setAttribute("onclick","$('input[name=detalles-foto"+detCount+"]').click();return false;");
+        $(button).html('<i class="fa fa-upload"></i> seleccionar...');
+        foto.appendChild(button);
+        // <input type="file" name="highlights-foto1" class="hidden" accept="image/*"/>
+        var fileInput = document.createElement('input');
+        fileInput.type = "file";
+        fileInput.accept = "image/*";
+        fileInput.className = "hidden";
+        fileInput.name = 'detalles-foto'+detCount;
+        foto.appendChild(fileInput);
+        td1.appendChild(foto);
+        row.appendChild(td1);
+
+        var titulo  = document.createElement("input");
+        titulo.type = "text";
+        titulo.name = "detalles["+detCount+"][titulo]";
+        titulo.placeholder = "titulo";
+        td2.appendChild(titulo);
+        row.appendChild(td2);
+
+        var tipo  = document.createElement("select");
+        tipo.name = "detalles["+detCount+"][tipo]";
+        $(tipo).append("<option value='interior'>interior</option>");
+        $(tipo).append("<option value='exterior'>exterior</option>");
+        td3.appendChild(tipo);
+        row.appendChild(td3);
+
+        var texto  = document.createElement("textarea");
+        texto.name = "detalles["+detCount+"][texto]";
+        texto.className = "ckeditor";
+        td4.appendChild(texto);
+        row.appendChild(td4);
+
+        var tdDelete = document.createElement("td");
+        var button = document.createElement("a");
+        button.className = "btn btn-danger";
+        button.href = "#";
+        var icon = document.createElement('i');
+        icon.className = "fa fa-trash";
+        button.appendChild(icon);
+        tdDelete.appendChild(button);
+        row.appendChild(tdDelete);
+        $(button).on("click",function(){
+            $(this).parents('tr:first').animate({'opacity':'0'},333,function(){
+                $(this).remove();
+            });
+            // $(this).parents('tr:first').remove();
+        });
+        
+        row.className='detalle';
+        
+        $(row).insertBefore(btnpos);
+        setEvents();
+        CKEDITOR.replace(texto.name); 
+    });
+    $("button[name='add-color']").off("click");
+    $("button[name='add-color']").on("click",function(evt){
+        evt.preventDefault();
+        var btnPos = $(this).parents('tr:first');
+
+        var row = document.createElement("tr");
+        var td1 = document.createElement("td");
+        var td2 = document.createElement("td");
+
+        // BOTON
+        var divBoton = document.createElement("div");
+        var foto  = document.createElement("div");
+        foto.className = "thumb-loader";
+        var thumbContainer = document.createElement("div");
+        thumbContainer.className = "thumb-container";
+        var img = document.createElement('img');
+        img.className = "thumb-foto";
+        thumbContainer.appendChild(img);
+        var loading = document.createElement("span");
+        loading.className = "loading";
+        $(loading).html("<i class='fa fa-spinner fa-spin'></i>");
+        thumbContainer.appendChild(loading);
+        foto.appendChild(thumbContainer);
+        var hiddenInput = document.createElement('input');
+        hiddenInput.type = "hidden";
+        hiddenInput.name = "colores["+colCount+"][boton]";
+        foto.appendChild(hiddenInput);
+        var button = document.createElement('button');
+        button.className = "btn btn-primary";
+        button.setAttribute("onclick","$('input[name=botoncolores"+colCount+"]').click();return false;");
+        $(button).html('<i class="fa fa-upload"></i> Seleccionar...');
+        foto.appendChild(button);
+        var fileInput = document.createElement('input');
+        fileInput.type = "file";
+        fileInput.accept = "image/*";
+        fileInput.className = "hidden";
+        fileInput.name = 'botoncolores'+colCount;
+        foto.appendChild(fileInput);
+        divBoton.appendChild(foto);
+
+        td1.appendChild(divBoton);
+        row.appendChild(td1);
+
+        // FOTO
+        var divFoto = document.createElement("div");
+        var foto  = document.createElement("div");
+        foto.className = "thumb-loader";
+        var thumbContainer = document.createElement("div");
+        thumbContainer.className = "thumb-container";
+        var img = document.createElement('img');
+        img.className = "thumb-foto";
+        thumbContainer.appendChild(img);
+        var loading = document.createElement("span");
+        loading.className = "loading";
+        $(loading).html("<i class='fa fa-spinner fa-spin'></i>");
+        thumbContainer.appendChild(loading);
+        foto.appendChild(thumbContainer);
+        var hiddenInput = document.createElement('input');
+        hiddenInput.type = "hidden";
+        hiddenInput.name = "colores["+colCount+"][foto]";
+        foto.appendChild(hiddenInput);
+        var button = document.createElement('button');
+        button.className = "btn btn-primary";
+        button.setAttribute("onclick","$('input[name=fotocolores"+colCount+"]').click();return false;");
+        $(button).html('<i class="fa fa-upload"></i> Seleccionar...');
+        foto.appendChild(button);
+        var fileInput = document.createElement('input');
+        fileInput.type = "file";
+        fileInput.accept = "image/*";
+        fileInput.className = "hidden";
+        fileInput.name = 'fotocolores'+colCount;
+        foto.appendChild(fileInput);
+        divFoto.appendChild(foto);
+
+        td2.appendChild(divFoto);
+        row.appendChild(td2);
+
+        var tdDelete = document.createElement("td");
+        var button = document.createElement("a");
+        button.className = "btn btn-danger";
+        button.href = "#";
+        var icon = document.createElement('i');
+        icon.className = "fa fa-trash";
+        button.appendChild(icon);
+        tdDelete.appendChild(button);
+        row.appendChild(tdDelete);
+        $(button).on("click",function(){
+            $(this).parents('tr:first').animate({'opacity':'0'},333,function(){
+                $(this).remove();
+            });
+            // $(this).parents('tr:first').remove();
+        });
+        
+        row.className='color';
+        
+        $(row).insertBefore(btnPos);
+        setEvents();
+    });
+    CKEDITOR.editorConfig = function( config ) {
+        config.language = 'es';
+        config.uiColor = '#F7B42C';
+        config.height = 300;
+        config.toolbarCanCollapse = true;
+    };
+    try{
+        $("textarea.ckeditor").each(function(k,v){ 
+            var name = v.name; 
+            CKEDITOR.replace(name); 
+        });
+    } catch(e){
+        console.log(e);
+    }
+}
+function closeFormModelo(){
+    $("#form-modelo").fadeOut(120);
+    $("#form-modelo form input").val("");
+    $("#form-modelo form").find("img").each(function(k,v){
+        v.src='';
+        $(v).css({"width":"159px","height":""});
+    });
+    $("#form-modelo form").find("table tr.version").remove();
+    $("#form-modelo form").find("table tr.highlight").remove();
+    $("#form-modelo form").find("table tr.detalle").remove();
+    $("#form-modelo form").find("table tr.color").remove();
+    $("#form-modelo form input[name=id]").remove();
+    $("#form-modelo").scrollTop(0);
+    $("a[href='#panel-info']").click();
+    return false;
+}
+var spinnerShowing = false;
+function loading(){
+    var show = !spinnerShowing;
+    if( show ){
+        var opts = {
+            lines: 17 // The number of lines to draw
+            , length: 56 // The length of each line
+            , width: 3 // The line thickness
+            , radius: 0 // The radius of the inner circle
+            , scale: 0.75 // Scales overall size of the spinner
+            , corners: 0.5 // Corner roundness (0..1)
+            , color: '#000' // #rgb or #rrggbb or array of colors
+            , opacity: 0.25 // Opacity of the lines
+            , rotate: 0 // The rotation offset
+            , direction: 1 // 1: clockwise, -1: counterclockwise
+            , speed: 1.1 // Rounds per second
+            , trail: 54 // Afterglow percentage
+            , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+            , zIndex: 2e9 // The z-index (defaults to 2000000000)
+            , className: 'spinner' // The CSS class to assign to the spinner
+            , top: '50%' // Top position relative to parent
+            , left: '50%' // Left position relative to parent
+            , shadow: false // Whether to render a shadow
+            , hwaccel: false // Whether to use hardware acceleration
+            , position: 'absolute' // Element positioning
+        }
+        var target = document.getElementById('page-body');
+        var spinner = new Spinner(opts).spin(target);
+    } else {
+        $(".spinner[role=progressbar]").remove();
+    }
+    spinnerShowing = show;
+}
+function focusNombreModelo(){
+    $("#nombre-modelo input").focus();
+    var strLength = $("#nombre-modelo input").val().length*2;
+    $("#nombre-modelo input")[0].setSelectionRange(strLength, strLength);;
+}

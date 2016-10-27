@@ -4,10 +4,12 @@ include_once 'TableFactory.class.php';
 class Compiler {
     private $url;
     private $doms;
+    private $edit;
 
-    function __construct($url = "home"){
+    function __construct($url = "home", $edit = false){
         global $dbh;
         $this->url = $url;
+        $this->edit = $edit;
         $cur = $dbh->query("SELECT idDom FROM template_dom WHERE idTemplate=-1 or idTemplate=(select id from template where name=?);",array($url));
         if( !empty($cur) ){
             $doms = array();

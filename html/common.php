@@ -25,8 +25,7 @@ ini_set('include_path', ini_get('include_path').PATH_SEPARATOR.$libs);
 
 
 define('PATH',$path);
-define('COOKIE_ID',md5($path));
-define('USER_COOKIE_ID',md5($path."user"));
+define('COOKIE',md5($path));
 
 // INCLUDES
 include_once 'View.class.php';

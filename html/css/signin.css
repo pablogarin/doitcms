@@ -1,0 +1,78 @@
+*{
+    font-family:'Montserrat', sans-serif;
+}
+body {
+    /*
+  padding-top: 40px;
+  padding-bottom: 40px;
+  */
+  background-color: #fff;
+  height:100vh;
+}
+body > .container{
+  height:100vh;
+}
+.btn{
+  border-radius:0;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.06), 0 2px 5px 0 rgba(0, 0, 0, 0.2);
+  -o-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.06), 0 2px 5px 0 rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.06), 0 2px 5px 0 rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.06), 0 2px 5px 0 rgba(0, 0, 0, 0.2);
+}
+.form-signin-heading{
+    text-align:center;
+    text-transform:normal;
+    width:100%;
+    margin-bottom:40px;
+}
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+  margin-top:120px;
+  background-color:#eee;
+  color:#333;
+  min-height:300px;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+  border-radius:3px;
+}
+.form-signin  .alert.alert-danger{
+    margin-top: -24px;
+    text-align: center;
+}
+.form-signin  .alert.alert-danger strong{
+    display:block;
+    margin: 8px auto;
+    font-size: 18px;
+}
+.form-signin .checkbox {
+  margin-bottom: 10px;
+}
+.form-signin .checkbox {
+  font-weight: normal;
+}
+.form-signin .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input:focus{
+  outline:none;
+}
+.form-signin input[type="text"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}

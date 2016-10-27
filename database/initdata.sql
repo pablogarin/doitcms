@@ -134,3 +134,4 @@ INSERT INTO content_dom(idContent,idDom) VALUES
 (1,26),
 (2,6),
 (3,14);
+INSERT INTO usuario(username, password, cookie, active) VALUES('admin','admin','',1);
