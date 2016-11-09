@@ -1,1 +1,177 @@
-<p>En Construcci&oacute;n</p>
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><a href="/admin/pedidos">Total Ventas Mes</a></h3>
+            </div>
+            <div class="panel-body">
+                <h3 class="big-content">${{ totalVentas|number_format(0,',','.') }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><a href="/admin/pedidos">Ventas Por Pagar</a></h3>
+            </div>
+            <div class="panel-body">
+                <h3 class="big-content">{{ ventasPendientes }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Total Clientes</h3>
+            </div>
+            <div class="panel-body">
+                <h3 class="big-content">{{ totalClientes }}</h2>
+            </div>
+        </div>
+    </div>
+</div><!-- /.row -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><a href="/admin/pedidos">Ventas &Uacute;ltimos 7 D&iacute;as</a></h3>
+            </div>
+            <div class="panel-body">
+                <canvas id="grafico-ventas" width="400" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Productos M&aacute;s Vendidos</h3>
+            </div>
+            <div class="panel-body">
+                <canvas id="grafico-productos" width="400" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div><!-- /.row -->
+<script src="/admin/dashboard?json=1" type="text/javascript"></script>
+<script src="/admin/js/Chart.bundle.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    getGraficoVentas(data);
+    getGraficoProductos(data);
+    function getGraficoVentas(json)
+    {
+        console.log(json);
+        var meses = [
+            "Ene",
+            "Feb",
+            "Mar",
+            "Abr",
+            "May",
+            "Jun",
+            "Jul",
+            "Ago",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dic"
+        ]
+        var fechas = []
+        for( var i in json.fechas ){
+            var d = new Date(json.fechas[i]);
+            fechas.push((d.getDate()+1)+"/"+meses[d.getMonth()]+"/"+d.getFullYear());
+        }
+        var ingresadas = json.ingresadas;
+        var aceptadas = json.aceptadas;
+        var finalizadas = json.finalizadas;
+        var data = {
+            labels: fechas,
+            datasets: [
+                {
+                    label: "Compras Pagadas",
+                    fill: true,
+                    lineTension: 0.3,
+                    backgroundColor: "rgba(0,0,255,0.4)",
+                    borderColor: "rgba(0,0,255,1)",
+                    data: finalizadas
+                },
+                {
+                    label: "Compras Aceptadas",
+                    fill: true,
+                    lineTension: 0.3,
+                    backgroundColor: "rgba(0,255,0,0.4)",
+                    borderColor: "rgba(0,255,0,1)",
+                    data: aceptadas
+                },
+                {
+                    label: "Compras Abandonadas",
+                    fill: true,
+                    lineTension: 0.3,
+                    backgroundColor: "rgba(255,0,0,0.4)",
+                    borderColor: "rgba(255,0,0,1)",
+                    data:  ingresadas
+                }
+            ]
+        }
+        var options = {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    boxWidth:15
+                }
+            },
+            scales: {
+                yAxes: [{
+                    //stacked: true,
+                    ticks: {
+                        beginAtZero: true,
+                        stepSize: 1
+                    }
+                }],
+                xAxes: [{
+                    time: {
+                        displayFormats: 'YYYY MM DD'
+                    }
+                }]
+            }
+        }
+        var ctx = document.getElementById("grafico-ventas");;
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: data,
+            options: options
+        });
+    }
+    function getGraficoProductos(json)
+    {
+        var productos = json.productosMasVendidos;
+        var cantidades = json.productosCantidades;
+        var data = {
+            labels: productos,
+            datasets: [
+                {
+                    data: cantidades,
+                    backgroundColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)'
+                    ],
+                }
+            ]
+        }
+        var options = {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    boxWidth:15
+                }
+            }
+        }
+        var ctx = document.getElementById("grafico-productos");;
+        var myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: data,
+            options: options
+        });
+    }
+</script>
