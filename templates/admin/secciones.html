@@ -1,0 +1,323 @@
+<div class="container-fluid">
+    <div class="row">
+        <h3><i class="fa fa-th-list"></i> Secciones</h3>
+    </div><!-- /.row -->
+    <div class="row">
+        <ul>
+        {% for branch in tree %}
+        <li>
+            <a href="#toggle={{branch.id}}"><i class="fa fa-minus-square-o"></i></a>
+            <span>{{branch.name|raw}}</span>
+            <span>
+                <a href="#edit={{branch.id}}" data-name="{{branch.name}}" data-parent="{{branch.parentSection}}" data-order="{{branch.sectionOrder}}"><i class="fa fa-edit"></i></a>
+                <a href="#child={{branch.id}}" data-name="{{branch.name}}"><i class="fa fa-plus"></i></a>
+            </span>
+            {% if branch.childs is not empty %}
+            <ul class="childNodes">
+                {% for child in branch.childs %}
+                <li>
+                {% if child.childs is not empty %}
+                <a href="#toggle={{child.id}}"><i class="fa fa-minus-square-o"></i></a>
+                {% else %}
+                <i class="fa fa-square-o"></i>
+                {% endif %}
+                <span>{{child.name|raw}}</span>
+                <span>
+                    {% if child.id!=1 and child.id!=2 %}
+                    <a href="#edit={{child.id}}" 
+                        data-name="{{child.name}}" 
+                        data-url="{{child.url}}" 
+                        data-parent="{{child.parentSection}}" 
+                        data-order="{{branch.sectionOrder}}">
+                            <i class="fa fa-edit"></i>
+                    </a>
+                    <a href="#child={{child.id}}" data-name="{{child.name}}" data-order="{{branch.sectionOrder}}"><i class="fa fa-plus"></i></a>
+                    {% if child.childs is empty %}
+                    <a href="#delete={{child.id}}"><i class="fa fa-trash"></i></a>
+                    <a href="#page={{child.id}}" 
+                        data-url="{{child.url}}" 
+                        data-description="{{child.description}}" 
+                        data-name="{{child.name}}">
+                        <i class="fa fa-file-o"></i>
+                    </a>
+                    {% endif %}
+                    {% else %}
+                    <a href="#activate={{child.id}}"><i class="fa {% if child.active %}fa-check-square-o{% else %}fa-minus-square-o{% endif %}"></i></a>
+                    {% endif %}
+                </span>
+                    {% if child.childs is not empty %}
+                    <ul class="childNodes">
+                        {% for grandchild in child.childs %}
+                        <li>
+                        <i class="fa fa-square-o"></i>
+                        <span>{{grandchild.name|raw}}</span>
+                        <span>
+                            <a href="#edit={{grandchild.id}}" 
+                                data-name="{{grandchild.name}}" 
+                                data-url="{{grandchild.url}}" 
+                                data-parent="{{grandchild.parentSection}}" 
+                                data-order="{{grandchild.sectionOrder}}">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                            <a href="#delete={{grandchild.id}}"><i class="fa fa-trash"></i></a>
+                            <a href="#page={{grandchild.id}}" 
+                                data-name="{{grandchild.name}}" 
+                                data-description="{{grandchild.description}}" 
+                                data-url="{{grandchild.url}}">
+                                <i class="fa fa-file-o"></i>
+                            </a>
+                        </span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </li>
+        {% endfor %}
+        </ul>
+    </div><!-- /.row -->
+</div><!-- /-container-fluid -->
+<form name="page-form" method="POST">
+    <div id="modal-page" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Crear Vista</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="name">URL</label>
+                        <input type="text" name="name" id="name" value="" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Descripci&oacute;n</label>
+                        <input type="text" name="description" id="description" value="" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="section">Secci&oacute;n</label>
+                        <select name="section" id="section" class="form-control">
+                            {% for sect in sections %}
+                            <option value="{{sect.id}}">{{ sect.name|raw }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Grabar</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</form>
+<form name="edit-form" method="POST">
+    <div id="modal-edit" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"><span class="new-label hide">Nueva</span><span class="edit-label">Editar</span> Secci&oacute;n</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="name">Nombre</label>
+                        <input type="text" name="name" id="name" value="" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="url">URL</label>
+                        <input type="text" name="url" id="url" value="" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="parentSection"></label>
+                        <select name="parentSection" id="parentSection" class="form-control">
+                            {% for sect in sections %}
+                            <option value="{{sect.id}}">{{ sect.name|raw }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="sectionOrder">Orden</label>
+                        <input type="text" name="sectionOrder" id="sectionOrder" value="" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary" name="grabar">Grabar</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</form>
+<script type="text/javascript">
+    (function($){
+        $(window).on("hashchange", function(e){
+            var hash    = (window.location.hash).substr(1);
+            var tmp     = hash.split("=");
+            var action  = tmp[0];
+            var id      = tmp[1];
+            var name    = $("a[href='#"+hash+"']").attr("data-name");
+            var url     = $("a[href='#"+hash+"']").attr("data-url");
+            var description = $("a[href='#"+hash+"']").attr("data-description");
+            var parentS = $("a[href='#"+hash+"']").attr("data-parent");
+            var order   = $("a[href='#"+hash+"']").attr("data-order");
+            window.location.hash = "#";
+            switch(action){
+            case 'edit':
+                $("form[name='edit-form'] input[name='name']").val(name)
+                $("form[name='edit-form'] input[name='url']").val(url)
+                $("form[name='edit-form'] select[name='parentSection']").val(parentS)
+                $("form[name='edit-form'] input[name='sectionOrder']").val(order)
+                $("form[name='edit-form'] button[name='grabar']").val(id)
+                $(".edit-label").removeClass('hide');
+                $(".new-label").addClass('hide');
+                $("#modal-edit").modal();
+                break;
+            case 'child':
+                $("form[name='edit-form'] input[name='name']").val("")
+                $("form[name='edit-form'] input[name='url']").val("")
+                $("form[name='edit-form'] select[name='parentSection']").val(id)
+                $("form[name='edit-form'] input[name='sectionOrder']").val("0.0")
+                $("form[name='edit-form'] button[name='grabar']").val("add")
+                $(".edit-label").addClass('hide');
+                $(".new-label").removeClass('hide');
+                $("#modal-edit").modal();
+                break;
+            case 'page':
+                $("form[name='page-form'] input[name='name']").val(url).attr("disabled",true)
+                $("form[name='page-form'] input[name='description']").val("")
+                if( typeof description !== 'undefined' ){
+                    $("form[name='page-form'] input[name='description']").val(description)
+                }
+                $("form[name='page-form'] select[name='section']").val(id).attr("disabled",true)
+                $("#modal-page").modal();
+                break;
+            case 'activate':
+                showSpinner();
+                var data = {
+                    'action':'activate',
+                    'id':id
+                };
+                $.ajax({
+                    url     : '/admin/service',
+                    data    : data,
+                    type    : 'POST',
+                    success : function(data){
+                        if(data.ok){
+                            //window.location.reload();
+                            reloadContent();
+                        } else {
+                            alert(data.error);
+                        }
+                    }, 
+                    error   : function(){
+                    }
+                })
+                break;
+            case 'delete':
+                var r = confirm("¿Seguro desea borrar el registro?");
+                if(r){
+                    showSpinner();
+                    var data = {
+                        'action':'delete',
+                        'id':id
+                    };
+                    $.ajax({
+                        url     : '/admin/service',
+                        data    : data,
+                        type    : 'POST',
+                        success : function(data){
+                            if(data.ok){
+                                window.location.reload();
+                                /*
+                                reloadContent();
+                                reloadMenu();
+                                */
+                            } else {
+                                alert(data.error);
+                            }
+                        }, 
+                        error   : function(){
+                        }
+                    })
+                }
+                break;
+        });
+        $("body").on("submit", "form[name='edit-form']", function(e){
+                e.preventDefault();
+                showSpinner();
+                var form = this;
+                var data = {
+                'action': 'section', 
+                'id': form.grabar.value, 
+                'name': form.name.value, 
+                'parentSection': form.parentSection.value,
+                'url':form.url.value,
+                'sectionOrder':form.sectionOrder.value
+                };
+                $.ajax({
+                    url     : '/admin/service',
+                    data    : data,
+                    type    : 'POST',
+                    success : function(data){
+                        if(data.ok){
+                            reloadContent();
+                            //window.location.reload();
+                        } else {
+                            alert(data.error);
+                        }
+                    }, 
+                    error   : function(){
+                    }
+                })
+        })
+        $("body").on("submit", "form[name='page-form']", function(e){
+                e.preventDefault();
+                showSpinner();
+                var form = this;
+                var data = {
+                'action': 'page', 
+                'name': form.name.value, 
+                'description':form.description.value,
+                'section': form.section.value
+                };
+                $.ajax({
+                    url     : '/admin/service',
+                    data    : data,
+                    type    : 'POST',
+                    success : function(data){
+                        if(data.ok){
+                            window.location.reload();
+                            /*
+                            reloadContent();
+                            reloadMenu();
+                            */
+                        } else {
+                            alert(data.error);
+                        }
+                    }, 
+                    error   : function(){
+                    }
+                })
+        })
+        function reset(){
+            $("form[name='edit-form'] input[name='name']").val("")
+            $("form[name='edit-form'] select[name='parentSection']").val("")
+            $("form[name='edit-form'] button[name='grabar']").val("")
+            $("form[name='page-form'] input[name='name']").val("")
+            $("form[name='page-form'] input[name='description']").val("")
+            $("form[name='page-form'] select[name='section']").val("")
+        }
+        function reloadContent(){
+            $("#main-content").load("/admin/secciones #main-content>*",null,function(){
+                    showSpinner();
+            });
+        }
+        function reloadMenu(){
+            $("#nav-accordion").load("/admin/secciones #nav-accordion>*",null,function(){});
+        }
+    })(jQuery);
+</script>

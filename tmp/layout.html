@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        <title>{{ configs.nombreSitio.valor }}{% if title %} - {{title|capitalize}}{% endif %}</title>
+
+        <!-- Bootstrap -->
+        <link href="{{url}}/css/bootstrap.min.css" rel="stylesheet">
+        <link href="{{url}}/css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+        <link href="/js/slick/slick.css" rel="stylesheet" type="text/css" />
+        <link href="/js/slick/slick-theme.css" rel="stylesheet" type="text/css" />
+        <link href="{{url}}/css/styles.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        </head>
+    <body>
+        <div id="main-container" class="container">
+            <div class="masthead">
+                <div class="logo-container logo-small">
+                    <a href="/" title="Home Preciada">
+                        <img src="{{url}}/assets/logo.png" alt="Preciada Bazar" class="logo-img" />
+                    </a>
+                </div>
+                <nav>
+                    <div class="navbar-header">
+                        <div id="cart-container" class="responsive">
+                        {{ CART|raw }}
+                        </div>
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar top"></span>
+                            <span class="icon-bar mid"></span>
+                            <span class="icon-bar bot"></span>
+                        </button>
+                    </div>
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav nav-justified">
+                            <li{% if current is empty %} class="active"{% endif %}><a href="{{ url }}">Home</a></li>
+                            <li class="dropdown{% if current=='tienda' %} active{% endif %}">
+                            <a href="tienda" class="dropdown-toggle" data-toggle="dropdown">Tienda <span class="caret"></span></a>
+                                <ul id="bazar-dropdown" class="dropdown-menu">
+                                {% for cat in categories %}
+                                    <li{% if submenuCurrent==cat.link %} class="active"{% endif %}><a href="/{{ cat.link }}">{{ cat.nombre }}</a></li>
+                                {% endfor %}
+                                </ul>
+                            </li>
+                            <li{% if current=='blog' %} class="active"{% endif %}><a href="{{ url }}/blog">Blog</a></li>
+                            <li{% if current=='quienes-somos' %} class="active"{% endif %}><a href="{{ url }}/quienes-somos">&iquest;Qui&eacute;nes Somos?</a></li>
+                            <li{% if current=='como-comprar' %} class="active"{% endif %}><a href="{{ url }}/como-comprar">&iquest;C&oacute;mo Comprar?</a></li>
+                            <li{% if current=='contacto' %} class="active"{% endif %}><a href="{{ url }}/contacto">Contacto</a></li>
+                            <li>
+                                <div id="cart-container">
+                                {{ CART|raw }}
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div><!-- /.masthead -->
+            {% if crumbs is not empty %}
+            <div class="breadcrumb-container">
+                <ul class="breadcrumb">
+                    <li><a href="/"><i class="fa fa-home"></i></a></li>
+                    {% for crumb in crumbs %}
+                    {% if crumb.link != true %}
+                    <li class="active">{{ crumb.value }}</li>
+                    {% else %}
+                    <li><a href="{{ crumb.link }}">{{ crumb.value }}</a></li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            <div id="main-content">{{ content|raw }}</div>
+        </div><!-- /.container -->
+        <footer id="footer">
+            <div class="container">
+                <div class="row socials pull-right">
+                    <a class="social-badge" href="{{ configs.facebookURL.valor }}" target="_blank"><i class="fa fa-facebook"></i></a>
+                    <a class="social-badge" href="{{ configs.instagramURL.valor }}" target="_blank"><i class="fa fa-instagram"></i></a>
+                    <!-- <a class="social-badge" href="{{ configs.twitterURL.valor }}" target="_blank"><i class="fa fa-twitter"></i></a>-->
+                </div>
+            </div>
+        </footer>
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="{{url}}/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="/js/zoom-master/jquery.zoom.min.js" type="text/javascript"></script>
+        <script src="/js/slick/slick.js" type="text/javascript"></script>
+        <!-- Custom JS -->
+        <script src="{{url}}/js/script.js" type="text/javascript"></script>
+    </body>
+</html>

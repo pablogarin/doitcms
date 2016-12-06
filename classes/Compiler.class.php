@@ -5,11 +5,11 @@ class Compiler {
     private $doms;
     private $edit;
 
-    function __construct($url = "home", $edit = false){
+    function __construct($url = "home", $layout = -1, $edit = false){
         global $dbh;
         $this->url = $url;
         $this->edit = $edit;
-        $cur = $dbh->query($q = "SELECT idDom FROM template_dom WHERE idTemplate=-1 or idTemplate=(select id from template where name=?);",array($url));
+        $cur = $dbh->query($q = "SELECT idDom FROM template_dom WHERE idTemplate=? or idTemplate=(select id from template where name=?);",array($layout,$url));
         if( !empty($cur) ){
             $doms = array();
             foreach( $cur as $row ){
@@ -22,7 +22,7 @@ class Compiler {
         global $dbh;
         $doms = array();
         if( in_array($id, $this->doms )){
-            $cur = $dbh->query("SELECT * FROM dom WHERE id=? order by domOrder;",array($id));
+            $cur = $dbh->query("SELECT * FROM dom WHERE id=?;",array($id));
             if( empty($cur) ){
                 return false;
             }
@@ -37,7 +37,7 @@ class Compiler {
                     }
                 }
                 $doms[$dom['id']] = $dom;
-                $subCur = $dbh->query("SELECT * FROM dom WHERE id!=? AND parentDom=?;",array($id, $id));
+                $subCur = $dbh->query("SELECT * FROM dom WHERE id!=? AND parentDom=? order by domOrder;",array($id, $id));
                 if( !empty($subCur) ){
                     $doms[$dom['id']]['hijos'] = array();
                     foreach( $subCur as $child ){
@@ -91,7 +91,7 @@ class Compiler {
                         $table = $contCur[0]['tableName'];
                         $keyName = $contCur[0]['keyName'];
                         $keyValue = $contCur[0]['keyValue'];
-                        $content = $dbh->query("SELECT * FROM $table WHERE $keyName=? AND active=1;",array($keyValue));
+                        $content = $dbh->query($q="SELECT * FROM $table WHERE $keyName='$keyValue';");
                         if( !empty($content) ){
                             switch($table){
                             case 'text':
@@ -123,9 +123,17 @@ class Compiler {
         return $tag;
     }
     public function getCompiledView(){
+        global $view;
         //TODO: check if si cached, else create it and save it to file...
-        //print_r($this->getDomsRecursive());exit;
-        return "<!DOCTYPE html>\n".$this->parseRecursive($this->getDomsRecursive());
+        $strHTML = "<!DOCTYPE html>\n".$this->parseRecursive($this->getDomsRecursive());
+        $fileName = $this->url.".phtml";
+        $fullPath = PATH."/tmp/";
+        $handle = fopen($fullPath.$fileName, "w");
+        fwrite($handle, $strHTML);
+        fclose($handle);
+        $view->setFolder($fullPath);
+        $view->setTemplate($fileName);
+        return $view->getView();
     }
 }
 

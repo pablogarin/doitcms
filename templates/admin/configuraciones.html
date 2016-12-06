@@ -1,0 +1,44 @@
+<div class="container-fluid">
+    <div class="row">
+        <h3><i class="fa fa-cogs"></i> Configuraciones</h3>
+    </div><!-- /.row -->
+    <div class="row">
+        <form method="POST">
+            {% if success %}
+            <h4 class="aler alert-success">Datos Acutalizados!</h4>
+            {% endif %}
+            {% if error %}
+            <div class="alert alert-danger">No se pudo grabar. Revise los datos e inten&eacute;lo nuevamente.</div>
+            {% endif %}
+            <table class="table table-striped table-bordered">
+                <tr>
+                    <th>Configuraci&oacute;n</th>
+                    <th>Valor</th>
+                </tr>
+                {% for conf in configs %}
+                        {% if conf.type=='text' or conf.type=='password' %}
+                <tr>
+                    <td>{{conf.name|raw}}</td>
+                    <td>
+                        <input type="{{conf.type}}" name="conf[{{conf.id}}]" value="{{conf.value}}" id="config-{{conf.id}}">
+                    </td>
+                </tr>
+                        {% elseif conf.type=='select' %}
+                <tr>
+                    <td>{{conf.name|raw}}</td>
+                    <td>
+                        <select name="conf[{{conf.id}}]">
+                            {% for option in conf.options %}
+                            <option value="{{option}}">{{option|upper}}</option>
+                            {% endfor %}
+                        </select>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            <button class="col-md-4 col-md-offset-4 btn btn-success" type="submit" name="grabar"><i class="fa fa-save"></i> Grabar</button>
+        </form>
+    </div><!-- /.row -->
+</div><!-- /-container-fluid -->
+
