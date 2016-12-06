@@ -1,0 +1,21 @@
+{% for menu in sections %}
+    {% if menu.active %}
+    {% if menu.childs is not empty%}
+    <li class="dropdown{% if page==menu.url %} active{%endif%}">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            {{menu.name}}
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+        {% for submenu in menu.childs %}
+            <li><a href="{{submenu.url}}">{{submenu.name|raw}}</a></li>
+        {% endfor %}
+        </ul>
+    </li>
+    {% else %}
+    <li{% if page==menu.url %} class="active"{%endif%}>
+        <a href="{{menu.url}}">{{menu.name}}</a>
+    </li>
+    {% endif %}
+    {% endif %}
+{% endfor %}

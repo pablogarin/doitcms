@@ -21,14 +21,7 @@ if( isset($_POST['action']) ){
                     $query  = "INSERT INTO section(name, parentSection, sectionOrder, active) VALUES(?,?,?,1);";
                     $data   = array($name, $parent, $order);
                     $ins    = $dbh->query($query, $data);
-                    $idContent = $dbh->query("INSERT INTO content(name,url,tableName,keyName,keyValue) VALUES(?,?,'section','id',?)", array("Menu ".$name,$url,$ins));
-                    $idDom = $dbh->query("INSERT INTO dom(type,closeTag,parentDom,domOrder) VALUES('li',1,24,?)", array($order));
-                    $a = $dbh->query("INSERT INTO dom(type,closeTag,parentDom) VALUES('a',1,?)", array($idDom));
-                    $atr = $dbh->query("INSERT INTO atribute(name, value) VALUES('href',?)", array($url));
-                    $ad = $dbh->query("INSERT INTO dom_atribute(idDom, idAtribute) VALUES(?,?)", array($a, $atr));
-                    $cur = $dbh->query("INSERT INTO content_dom(idContent, idDom) VALUES(?,?);", array($idContent, $a));
-                    $cur = $dbh->query("INSERT INTO template_dom(idTemplate, idDom) VALUES(?,?)", array(-1, $a));
-                    $cur = $dbh->query("INSERT INTO template_dom(idTemplate, idDom) VALUES(?,?)", array(-1, $idDom));
+                    $cur    = $dbh->query("INSERT INTO content(name,url,tableName,keyName,keyValue) VALUES(?,?,'section','id',?)", array("Menu ".$name,$url,$ins));
                 } else {
                     $query  = "UPDATE section SET name=?, parentSection=?, sectionOrder=? WHERE id=?;";
                     $data   = array($name, $parent, $order, $id);
@@ -45,22 +38,12 @@ if( isset($_POST['action']) ){
             $id = $_POST['id'];
             $cur = $dbh->query("SELECT * FROM content WHERE tableName='section' AND keyValue=?;", array($id));
             if( !empty($cur) ){
-                $idContent = $cur[0]['id'];
-                $cur = $dbh->query("SELECT * FROM content_dom WHERE idContent=?;",array($idContent));
-                if( !empty($cur) ){
-                    //TODO: borrar LI
-                    $idDom = $cur[0]['idDom'];
-                    $cur = $dbh->query("SELECT * FROM dom_atribute WHERE idDom=?;", array($idDom));
-                    $dbh->query("DELETE FROM atribute WHERE id=?;",array($cur[0]['idAtribute']));
-                    $dbh->query("DELETE FROM dom_atribute WHERE idDom=?;",array($idDom));
-                    $dbh->query("DELETE FROM content_dom WHERE idDom=?;",array($idDom));
-                    $dbh->query("DELETE FROM template_dom WHERE idDom=?;",array($idDom));
-                    $dbh->query("DELETE FROM content WHERE id=?;",array($idContent));
-                    $dbh->query("DELETE FROM dom WHERE id=?;",array($idDom));
-                    $cur = $dbh->query("DELETE FROM section WHERE id=?;", array($id));
-                }
+                $url = str_replace("/","",$cur[0]['url']);
+                $retval['url'] = $url;
+                $cur = $dbh->query("DELETE FROM section WHERE id=?;", array($id));
+                $cur2 = $dbh->query("DELETE FROM template WHERE name=?;", array($url));
             }
-            $retval['ok'] = $cur!==false;
+            $retval['ok'] = $cur!==false && isset($cur2) && $cur2!==false;
         }
         break;
     case 'activate':
@@ -79,6 +62,17 @@ if( isset($_POST['action']) ){
         break;
     case 'page':
         if( isset($_POST['name']) && isset($_POST['description']) && isset($_POST['section']) ){
+            // TODO: insert into template and section.
+            $_POST['name'] = str_replace('/','',$_POST['name']);
+            $sel = $dbh->query("SELECT * FROM template WHERE name=?;",array($_POST['name']));
+            if( !empty($sel) ){
+                $cur = $dbh->query("UPDATE template SET description=? WHERE name=?;", array($_POST['description'], $_POST['name']));
+            } else {
+                $cur = $dbh->query("INSERT INTO template(description,name) VALUES(?,?);", array($_POST['description'], $_POST['name']));
+            }
+            $retval['ok'] = $cur!==false;
+            if( !$retval['ok'] )
+                $retval['errorInfo'] = $dbh->errorInfo();
         }
         break;
     }

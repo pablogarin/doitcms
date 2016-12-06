@@ -1,5 +1,6 @@
 <?php
 $template = "secciones.html";
+/*
 if( isset($_POST['ajax']) ){
     if( isset($_POST['action']) ){
         $action = $_POST['action'];
@@ -29,31 +30,28 @@ if( isset($_POST['ajax']) ){
         }
     }
 }
+//*/
 
-$secciones = readSections();
-/*
-foreach( $secciones as $row ){
-    if( is_array($row) ){
-        foreach( $row as $child ){
-            print_r($child);
-        }
-    } else {
-        $cur = $dbh->query("SELECT * FROM template WHERE id");
+$tmp = readSections();
+$secciones = array();
+foreach( $tmp as $i=>$row ){
+    if($row['id']==-1){
+        $secciones[-1] = $row;
+        unset($tmp[$i]);
     }
 }
-exit;
-//*/
+$secciones[-1]['childs'] = $tmp;
 $view->set("tree",$secciones);
 $cur = $dbh->query("select * from section;");
 $view->set("sections", $cur);
-function readSections($start=null, $limit = 1){
+function readSectionsAdmin($start=null, $limit = 1){
     global $dbh;
     $sections = array();
     if( $limit<3 ){
         if( $start==null ){
             $cur = $dbh->query("SELECT * FROM section WHERE id=?;", array(-1));
             if( !empty($cur) ){
-                $cur[0]['childs'] = readSections(-1, 1);
+                $cur[0]['childs'] = readSectionsAdmin(-1, 1);
                 $sections[] = $cur[0];
             }
         } else {
@@ -61,7 +59,7 @@ function readSections($start=null, $limit = 1){
             if( !empty($cur) ){
                 foreach( $cur as $row ){
                     if( $row['id']!=-1 ){
-                        $childs = readSections($row['id'], $limit+1);
+                        $childs = readSectionsAdmin($row['id'], $limit+1);
                         if( !empty($childs) ){
                             $row['childs'] = $childs;
                         }

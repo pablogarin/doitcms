@@ -1,0 +1,3 @@
+<?php
+$template = "home.html";
+?>

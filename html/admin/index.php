@@ -19,8 +19,11 @@ case 'secciones':
 case 'configuraciones':
     include_once("configuraciones.php");
     break;
+case 'configuraciones':
+    include_once("configuraciones.php");
+    break;
 default:
-    $compiler = new \classes\Compiler($page,"admin");
+    $compiler = new \classes\Compiler($page,LAYOUT);
     print $compiler->getCompiledView();
     exit;
     break;

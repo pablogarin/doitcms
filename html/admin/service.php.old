@@ -1,0 +1,109 @@
+<?php
+header("Content-type: application/json; charset=UTF-8");
+$retval = array();
+if( isset($_POST['action']) ){
+    $action = $_POST['action'];
+    $retval['action'] = $action;
+    switch($action){
+    case 'section':
+        if( isset($_POST['id']) && isset($_POST['name']) && isset($_POST['parentSection']) && isset($_POST['sectionOrder']) && isset($_POST['url']) ){
+            if( !empty($_POST['id']) && !empty($_POST['name']) && !empty($_POST['parentSection']) && !empty($_POST['sectionOrder']) && !empty($_POST['url']) ){
+                $id     = $_POST['id'];
+                $new    = false;
+                if( $id=="add" ){
+                    $new = true;
+                }
+                $name   = $_POST['name'];
+                $parent = $_POST['parentSection'];
+                $url    = "/".$_POST['url'];
+                $order  = $_POST['sectionOrder'];
+                if( $new ){
+                    $query  = "INSERT INTO section(name, parentSection, sectionOrder, active) VALUES(?,?,?,1);";
+                    $data   = array($name, $parent, $order);
+                    $ins    = $dbh->query($query, $data);
+                    $idContent = $dbh->query("INSERT INTO content(name,url,tableName,keyName,keyValue) VALUES(?,?,'section','id',?)", array("Menu ".$name,$url,$ins));
+                    /* LAYOUT 1 */
+                    $idDom = $dbh->query("INSERT INTO dom(type,closeTag,parentDom,domOrder) VALUES('li',1,24,?)", array($order));
+                    $a = $dbh->query("INSERT INTO dom(type,closeTag,parentDom) VALUES('a',1,?)", array($idDom));
+                    $atr = $dbh->query("INSERT INTO atribute(name, value) VALUES('href',?)", array($url));
+                    $ad = $dbh->query("INSERT INTO dom_atribute(idDom, idAtribute) VALUES(?,?)", array($a, $atr));
+                    $cur = $dbh->query("INSERT INTO content_dom(idContent, idDom) VALUES(?,?);", array($idContent, $a));
+                    $cur = $dbh->query("INSERT INTO template_dom(idTemplate, idDom) VALUES(?,?)", array(-1, $a));
+                    $cur = $dbh->query("INSERT INTO template_dom(idTemplate, idDom) VALUES(?,?)", array(-1, $idDom));
+                    /* LAYOUT 2 */
+                    $idDom = $dbh->query("INSERT INTO dom(type,closeTag,parentDom,domOrder) VALUES('li',1,45,?)", array($order));
+                    $a = $dbh->query("INSERT INTO dom(type,closeTag,parentDom) VALUES('a',1,?)", array($idDom));
+                    $atr = $dbh->query("INSERT INTO atribute(name, value) VALUES('href',?)", array($url));
+                    $ad = $dbh->query("INSERT INTO dom_atribute(idDom, idAtribute) VALUES(?,?)", array($a, $atr));
+                    $cur = $dbh->query("INSERT INTO content_dom(idContent, idDom) VALUES(?,?);", array($idContent, $a));
+                    $cur = $dbh->query("INSERT INTO template_dom(idTemplate, idDom) VALUES(?,?)", array(-2, $a));
+                    $cur = $dbh->query("INSERT INTO template_dom(idTemplate, idDom) VALUES(?,?)", array(-2, $idDom));
+                    /* LAYOUT 3 */
+                    $idDom = $dbh->query("INSERT INTO dom(type,closeTag,parentDom,domOrder) VALUES('li',1,45,?)", array($order));
+                    $a = $dbh->query("INSERT INTO dom(type,closeTag,parentDom) VALUES('a',1,?)", array($idDom));
+                    $atr = $dbh->query("INSERT INTO atribute(name, value) VALUES('href',?)", array($url));
+                    $ad = $dbh->query("INSERT INTO dom_atribute(idDom, idAtribute) VALUES(?,?)", array($a, $atr));
+                    $cur = $dbh->query("INSERT INTO content_dom(idContent, idDom) VALUES(?,?);", array($idContent, $a));
+                    $cur = $dbh->query("INSERT INTO template_dom(idTemplate, idDom) VALUES(?,?)", array(-3, $a));
+                    $cur = $dbh->query("INSERT INTO template_dom(idTemplate, idDom) VALUES(?,?)", array(-3, $idDom));
+                } else {
+                    $query  = "UPDATE section SET name=?, parentSection=?, sectionOrder=? WHERE id=?;";
+                    $data   = array($name, $parent, $order, $id);
+                    $cur    = $dbh->query($query, $data);
+                }
+                $retval["ok"] = $cur!==false;
+            } else {
+                $retval["error"] = "Debe ingresar todos los datos.";
+            }
+        }
+        break;
+    case 'delete':
+        if( isset($_POST['id']) && !empty($_POST['id']) ){
+            $id = $_POST['id'];
+            $cur = $dbh->query("SELECT * FROM content WHERE tableName='section' AND keyValue=?;", array($id));
+            if( !empty($cur) ){
+                $idContent = $cur[0]['id'];
+                $cur = $dbh->query("SELECT * FROM content_dom WHERE idContent=?;",array($idContent));
+                if( !empty($cur) ){
+                    //TODO: borrar LI
+                    $idDom = $cur[0]['idDom'];
+                    $cur = $dbh->query("SELECT * FROM dom_atribute WHERE idDom=?;", array($idDom));
+                    $dbh->query("DELETE FROM atribute WHERE id=?;",array($cur[0]['idAtribute']));
+                    $dbh->query("DELETE FROM dom_atribute WHERE idDom=?;",array($idDom));
+                    $dbh->query("DELETE FROM content_dom WHERE idDom=?;",array($idDom));
+                    $dbh->query("DELETE FROM template_dom WHERE idDom=?;",array($idDom));
+                    $dbh->query("DELETE FROM content WHERE id=?;",array($idContent));
+                    $dbh->query("DELETE FROM dom WHERE id=?;",array($idDom));
+                    $dbh->query("DELETE FROM dom WHERE parentDom=?;",array($idDom));
+                    $cur = $dbh->query("DELETE FROM section WHERE id=?;", array($id));
+                }
+            }
+            $retval['ok'] = $cur!==false;
+        }
+        break;
+    case 'activate':
+        if( isset($_POST['id']) && !empty($_POST['id']) ){
+            $id = $_POST['id'];
+            $cur = $dbh->query("SELECT * FROM section WHERE id=?;",array($id));
+            if( !empty($cur) ){
+                $active = 0;
+                if( $cur[0]['active']==0 ){
+                    $active = 1;
+                }
+                $cur = $dbh->query("UPDATE section set active=? WHERE id=?;", array($active, $id));
+            }
+            $retval['ok'] = $cur!==false;
+        }
+        break;
+    case 'page':
+        if( isset($_POST['name']) && isset($_POST['description']) && isset($_POST['section']) ){
+            // TODO: insert into template and section.
+        }
+        break;
+    }
+    print json_encode($retval);
+    exit;
+}
+$retval["error"] = "No se ha ingresado ni una accion";
+print json_encode($retval);
+?>

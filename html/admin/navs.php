@@ -22,8 +22,8 @@ $navs = array(
         "current" => ($page=="vistas")
     )
 );
-/*
-$sections = $dbh->query("SELECT * FROM templates;");
+//*
+$sections = $dbh->query("SELECT * FROM template where id>0;");
 if( !empty($sections) ){
     $tmp = array();
     foreach( $sections as $row ){
@@ -32,7 +32,7 @@ if( !empty($sections) ){
             "name" => $row['name']
         );
     }
-    $navs['secciones']['navs'] = $tmp;
+    $navs['vistas']['navs'] = $tmp;
 }
 //*/
 $view->set("navs", $navs);
