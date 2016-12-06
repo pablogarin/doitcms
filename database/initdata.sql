@@ -29,7 +29,11 @@ INSERT INTO dom(id,type,domId,className,closeTag,parentDom,domOrder) VALUES
 (27,'link','','',false,1,0.6),
 (28,'link','','',false,1,0.7),
 (29,'script','','',true,2,0.98),
-(30,'script','','',true,2,0.99);
+(30,'script','','',true,2,0.99),
+(31,'li','','',true,24,0.1),
+(32,'li','','',true,24,0.1),
+(33,'a','','',true,31,0.1),
+(34,'a','','',true,32,0.1);
 -- GO
 INSERT INTO atribute(id,name,value) VALUES
 (1,'lang','es'),
@@ -48,13 +52,15 @@ INSERT INTO atribute(id,name,value) VALUES
 (14,'aria-expanded','false'),
 (15,'aria-controls','navbar'),
 (16,'href','#'),
-(17,'href','{{url}}'),
+(17,'href','/'),
 (18,'href','/css/font-awesome.min.css'),
 (19,'href','/css/styles.css'),
 (20,'rel','stylesheet'),
 (21,'rel','stylesheet'),
 (22,'src','/js/spin.min.js'),
-(23,'src','/js/script.js');
+(23,'src','/js/script.js'),
+(24,'href','/nosotros'),
+(25,'href','/contacto');
 -- GO
 INSERT INTO dom_atribute(idDom,idAtribute) VALUES
 (3,2),
@@ -78,7 +84,9 @@ INSERT INTO dom_atribute(idDom,idAtribute) VALUES
 (28,19),
 (28,21),
 (29,22),
-(30,23);
+(30,23),
+(33,24),
+(34,25);
 -- GO
 -- GO
 INSERT INTO template(id, name, description) VALUES
@@ -115,11 +123,17 @@ INSERT INTO template_dom(idTemplate, idDom) VALUES
 (-1,28),
 (-1,29),
 (-1,30),
+(-1,31),
+(-1,32),
+(-1,33),
+(-1,34),
 (1,13),
 (1,14);
 -- GO
 INSERT INTO section(id,name,parentSection,sectionOrder,active) VALUES
-(-1,'Home',-1,0.00,true);
+(-1,'Home',-1,0.00,true),
+(1,'Nosotros',-1,0.99,true),
+(2,'Contacto',-1,0.99,true);
 -- GO
 INSERT INTO text(id,name,body) VALUES
 (1,'Titulo','Titulo de la Pagina'),
@@ -127,11 +141,26 @@ INSERT INTO text(id,name,body) VALUES
 -- GO
 INSERT INTO content(id,name,url,tableName,keyName,keyValue) VALUES
 (1,'Menu Home','/','section','id','-1'),
-(2,'Titulo Sitio','/','text','id','1'),
-(3,'Texto Bienvenida','home','text','id','2');
+(2,'Menu Nosotros','/nosotros','section','id','1'),
+(3,'Menu Contacto','/contacto','section','id','2'),
+(4,'Titulo Sitio','/','text','id','1'),
+(5,'Texto Bienvenida','home','text','id','2');
 -- GO
 INSERT INTO content_dom(idContent,idDom) VALUES
 (1,26),
-(2,6),
-(3,14);
+(2,33),
+(3,34),
+(4,6),
+(5,14);
 INSERT INTO usuario(username, password, cookie, active) VALUES('admin','admin','',1);
+INSERT INTO config(name,value,type) VALUES
+('Nombre del Sitio','Tienda Demo','text'),
+('URL del Sitio','http://tienda.pablogarin.cl','text'),
+('URL de Facebook','http://facebook.com','text'),
+('URL de Twitter','http://twitter.com','text'),
+('Correo Sitio','pablito.garin@gmail.com','text'),
+('Clave del Correo','G8r33x5434','password'),
+('Servidor de Correo Saliente','smtp.gmail.com','text'),
+('Puerto para Correo','465','text'),
+('Tipo de Seguridad del Correo','ssl','select[ssl,tls]'),
+('URL de Instragram','http://instagram.com','text');

@@ -1,121 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-    <title>Administrador de Contenido</title>
+    <title>DoitCms - Administraci&oacute;n de Contenido</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Font-Awesome CSS -->
-    <link href="/css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
-
+    <link href="/css/bootstrap.css" rel="stylesheet">
+    
+    <!--external css-->
+    <link href="/css/font-awesome/css/font-awesome.css" rel="stylesheet" />
+    
     <!-- Custom styles for this template -->
-    <link href="/css/dashboard.css" rel="stylesheet">
-    <link href="/libs/jquery-ui-1.11.4.custom/jquery-ui.theme.css" rel="stylesheet">
-    <link href="/libs/jquery-ui-1.11.4.custom/jquery-ui.css" rel="stylesheet">
-    <link href='https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400italic,700' rel='stylesheet' type='text/css'>
-    <link href="/js/slick/slick.css" rel="stylesheet" type="text/css">
-    <link href="/js/slick/slick-theme.css" rel="stylesheet" type="text/css">
     <link href="/css/admin.css" rel="stylesheet">
-
-    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]><script src="/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <script src="/js/ie-emulation-modes-warning.js"></script>
-
-    <!-- SVG Icons -->
-    <!--<script src="/js/lumino.glyphs.js"></script>-->
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <link href="/css/style-responsive.css" rel="stylesheet">
+    
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <script src="/admin/dist/js/jquery.js"></script>
+    <script src="/admin/dist/js/jquery-1.8.3.min.js"></script>
   </head>
 
   <body>
 
-    <nav class="navbar navbar-fixed-top">
-      <!--
-      <div id="over-nav">
-          <h2>Panel de Administrador</h2>
-      </div>
-      -->
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-left">
-          {% for class in navs %}
-            {% if class.navs is not empty %}
-              <li class="dropdown{% if class.active %} active{% endif %}">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ class.name|raw }} <span class="caret"></span></a>
-                  <ul class="dropdown-menu">
-                  {% for nav in class.navs %}
-                  <li{% if nav.current %} class="active"{% endif %}><a href="/{{ nav.url }}">{{ nav.name|raw }}</a></li>
-                  {% endfor %}
-                  </ul>
-              </li>
-            {% else %}
-              <li{% if class.current %} class="active"{% endif %}><a href="/{{ class.url }}">{{ class.name|raw }}</a></li>
-            {% endif %}
-          {% endfor %}
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="?logout">Cerrar Sesi&oacute;n</a></li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-
-    <div id="page-body" class="container">
-      <div id="main-content" class="row main">
+  <section id="container" >
+      <!-- TOP BAR CONTENIDO -->
+      <!--header start-->
+      <header class="header black-bg">
+            <div class="sidebar-toggle-box">
+             <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Panel de Navegación"></div>
+            </div>
+            <!--logo start-->
+            <a href="index.html" class="logo"><img src="/img/logo-doit-blanco.png" width="200"></a>
+            <!--logo end -->
+            
+            <div class="top-menu">
+            	<ul class="nav pull-right top-menu">
+                    <li><a class="logout" href="?logout">Cerrar Sesión</a></li>
+            	</ul>
+            </div>
+      </header>
+      <!--header end-->
+      
+      <!-- MAIN SIDEBAR MENU -->
+      <!--sidebar start-->
+      <aside>
+          <div id="sidebar"  class="nav-collapse ">
+              <!-- sidebar menu start-->
+              <ul class="sidebar-menu" id="nav-accordion">
+              
+                  <p class="centered"><img src="/img/ui-sam.jpg" class="img-circle" width="60"></p>
+                  <h5 class="centered">Administrador</h5>
+              	  
+              {% for class in navs %}
+                {% if class.navs is not empty %}
+                <li class="sub-menu">
+                    <a href="javascript:;"{% if class.current %} class="active"{% endif %}>
+                        <i class="fa {{class.icon}}"></i>
+                        <span>{{ class.name|raw }}</span><span class="caret"></span>
+                    </a>
+                    <ul class="sub">
+                    {% for nav in class.navs %}
+                        <li><a data-rel="#nav={{ nav.id }}">{{ nav.name|raw }}</a></li>
+                    {% endfor %}
+                        <li><a class="link-more" data-rel="#"> + Agregar Vista ..</a></li>
+                    </ul>
+                  </li>
+                {% else %}
+                <li class="mt">
+                    <a {% if class.current %} class="active"{% endif %} href="/{{ class.url }}">
+                        <i class="fa {{class.icon}}"></i>
+                        <span>{{ class.name|raw }}</span>
+                    </a>
+                </li>
+                {% endif %}
+              {% endfor %}
+              </ul>
+              <!-- sidebar menu end-->
+          </div>
+      </aside>
+      <!--sidebar end-->
+      
+      <!--  MAIN CONTENT  -->
+      <!--main content start-->
+      <section id="main-content">
+        <div class="wrapper site-min-height">
         {{ CONTENT|raw }}
-      </div>
-    </div>
-    <div id="loading" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <p class="message">Cargando&hellip;</p>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+        </div><!-- /.wrapper.site-min-height -->
+      </section>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="/js/vendor/jquery.min.js"><\/script>')</script>
-    <script src="/libs/jquery-ui-1.11.4.custom/jquery-ui.js" type="text/javascript"></script>
-    <script src="/js/locales/datepicker-es.js" type="text/javascript"></script>
-    <script src="/js/bootstrap.min.js"></script>
-    <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
-    <!--<script src="/js/holder.min.js"></script>-->
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="/js/ie10-viewport-bug-workaround.js"></script>
-    <script type="text/javascript" src="/js/spin.min.js"></script>
-    <!-- Custom Script -->
-    <script src="/js/ckeditor/ckeditor.js" type="text/javascript"></script>
-    <script src="/js/Chart.bundle.min.js" type="text/javascript"></script>
-    <script src="/js/slick/slick.js" type="text/javascript"></script>
-    <script src="/js/script.js" type="text/javascript"></script>
+    <!-- js placed at the end of the document so the pages load faster -->
+    <script src="/admin/dist/js/bootstrap.min.js"></script>
+    
+    <script class="include" type="text/javascript" src="/admin/dist/js/jquery.dcjqaccordion.2.7.js"></script>  
+     
+    <script src="/admin/dist/js/jquery.scrollTo.min.js"></script>
+    <script src="/admin/dist/js/jquery.nicescroll.js" type="text/javascript"></script>
+    <!-- common script for all pages-->
+    <script src="/admin/dist/js/common-scripts.js"></script>
+    <script type="text/javascript">
+      $('#sidebar .sidebar-menu > li > a, #sidebar > .sidebar-menu > .sub-menu > ul > li > a').click(function () {
+
+        var url = $(this).attr("data-rel");
+        $("#frameObject").attr("src",url);
+        console.log(url);
+      });
+    </script>
   </body>
 </html>
-

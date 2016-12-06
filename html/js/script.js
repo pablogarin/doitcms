@@ -56,5 +56,5 @@
         }
         this.loading = !this.loading;
     }
-    this.showSpinner();
+    //this.showSpinner();
 })(jQuery);

@@ -5,12 +5,19 @@ include_once 'login.php';
 if( isset($_REQUEST['p']) && !empty($_REQUEST['p']) ){
     $page = $_REQUEST['p'];
 } else {
-    $page = "dashboard-admin";
+    $page = "configuraciones";
 }
+include_once("navs.php");
 
 switch( $page ){
-case 'dashboard-admin':
-    include_once("dashboard-admin.php");
+case 'service':
+    include_once("service.php");
+    exit;
+case 'secciones':
+    include_once("secciones.php");
+    break;
+case 'configuraciones':
+    include_once("configuraciones.php");
     break;
 default:
     $compiler = new \classes\Compiler($page,"admin");

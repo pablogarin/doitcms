@@ -140,5 +140,8 @@ class SQLHelper extends PDO{
         }
         fclose($handle);
     }
+    public function getError(){
+        return $this->error;
+    }
 }
 ?>

@@ -1,8 +1,7 @@
 <?php
 $login = true;
 if( isset($_REQUEST['logout']) ){
-    unset($_SESSION);
-    unset($_COOKIE);
+    session_destroy();
     setcookie(COOKIE, null, time()-(3600*24*365));
     header("Location: /admin/");
     exit;

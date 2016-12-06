@@ -1,6 +1,5 @@
 <?php
 namespace classes;
-include_once 'TableFactory.class.php';
 class Compiler {
     private $url;
     private $doms;
@@ -10,7 +9,7 @@ class Compiler {
         global $dbh;
         $this->url = $url;
         $this->edit = $edit;
-        $cur = $dbh->query("SELECT idDom FROM template_dom WHERE idTemplate=-1 or idTemplate=(select id from template where name=?);",array($url));
+        $cur = $dbh->query($q = "SELECT idDom FROM template_dom WHERE idTemplate=-1 or idTemplate=(select id from template where name=?);",array($url));
         if( !empty($cur) ){
             $doms = array();
             foreach( $cur as $row ){
@@ -19,8 +18,9 @@ class Compiler {
             $this->doms = $doms;
         }
     }
-    function getDomsRecursive( $id = -1, $doms=array() ){
+    function getDomsRecursive($id = -1){
         global $dbh;
+        $doms = array();
         if( in_array($id, $this->doms )){
             $cur = $dbh->query("SELECT * FROM dom WHERE id=? order by domOrder;",array($id));
             if( empty($cur) ){
@@ -58,6 +58,7 @@ class Compiler {
         global $dbh;
         $tab .= "\t";
         foreach($domTree as $id=>$dom){
+            $continue = true;
             $tag = "";
             if($dom['id']!='-1')
                 $tag .= "$tab";
@@ -85,20 +86,25 @@ class Compiler {
                     }
                     $tag = str_replace("{{CHILD}}",$content, $tag);
                 } else {
-                    //TODO: place this on a factory class
                     $contCur = $dbh->query("SELECT * FROM content WHERE id IN (SELECT idContent FROM content_dom WHERE idDom=?);",array($dom['id']));
                     if( !empty($contCur) ){
                         $table = $contCur[0]['tableName'];
                         $keyName = $contCur[0]['keyName'];
                         $keyValue = $contCur[0]['keyValue'];
-                        $content = $dbh->query("SELECT * FROM $table WHERE $keyName=?",array($keyValue));
-                        switch($table){
-                        case 'text':
-                            $dom['content'] = array($content[0]['body']);
-                            break;
-                        case 'section':
-                            $dom['content'] = array($content[0]['name']);
-                            break;
+                        $content = $dbh->query("SELECT * FROM $table WHERE $keyName=? AND active=1;",array($keyValue));
+                        if( !empty($content) ){
+                            switch($table){
+                            case 'text':
+                                $dom['content'] = array($content[0]['body']);
+                                break;
+                            case 'section':
+                                $dom['content'] = array($content[0]['name']);
+                                break;
+                            }
+                        } else {
+                            $continue = false;
+                            unset($domTree[$id]);
+                            $tag = "";
                         }
                     }
                     if( isset($dom['content']) && !empty($dom['content']) ){
