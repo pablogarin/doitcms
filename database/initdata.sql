@@ -128,8 +128,8 @@ INSERT INTO template(id, name, description) VALUES
 (-3, 'L3', 'Menú Fijo.'),
 (1, 'Layout', 'Layout del Sitio'),
 (2, 'home', 'Home del sitio.'),
-(3, 'nosotros', 'P&aacute;gina de Informaci&oacute;n.'),
-(4, 'contacto', 'P&aacute;gina de Contacto.');
+(3, 'nosotros', 'P&aacute;gina de Informaci&oacute;n.');
+/*(4, 'contacto', 'P&aacute;gina de Contacto.');*/
 -- GO
 INSERT INTO template_dom(idTemplate, idDom) VALUES
 (-1,-1),
@@ -220,8 +220,8 @@ INSERT INTO template_dom(idTemplate, idDom) VALUES
 -- GO
 INSERT INTO section(id,name,parentSection,sectionOrder,active) VALUES
 (-1,'Home',-1,0.00,true),
-(1,'Nosotros',-1,0.99,true),
-(2,'Contacto',-1,0.99,true);
+(1,'Nosotros',-1,0.99,true);
+/*(2,'Contacto',-1,0.99,true);*/
 -- GO
 INSERT INTO text(id,name,body) VALUES
 (1,'Menu','{{MENU|raw}}'),
@@ -231,8 +231,8 @@ INSERT INTO content(id,name,url,tableName,keyName,keyValue) VALUES
 (1,'Menu Home','/','text','id','1'),
 (2,'Titulo Sitio','/','text','id','2'),
 (3,'Home','/home','section','id','-1'),
-(4,'Nosotros','/nosotros','section','id','1'),
-(5,'Contacto','/contacto','section','id','2');
+(4,'Nosotros','/nosotros','section','id','1');
+/*(5,'Contacto','/contacto','section','id','2');*/
 -- GO
 INSERT INTO content_dom(idContent,idDom) VALUES
 (1,24),
