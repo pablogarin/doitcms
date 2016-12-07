@@ -1,0 +1,189 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+	<title>Doitcms</title>
+	<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
+	<link rel="stylesheet" type="text/css" href="/admin/dist/css/jquery-ui.min.css"/>
+	<link rel="stylesheet" type="text/css" href="/admin/dist/css/font-awesome/css/font-awesome.min.css"/>
+	<link rel="stylesheet" type="text/css" href="/admin/dist/css/index2.css"/>
+	<!--//code.jquery.com/jquery-1.9.1.js-->
+	<script type="text/javascript" src="/js/jquery.js"></script>
+	<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/admin/dist/js/jquery-ui.js"></script>	
+	<script type="text/javascript" src="/js/ckeditor/ckeditor.js"></script>
+	<script type="text/javascript" src="/js/ckeditor/adapters/jquery.js"></script>
+	<script type="text/javascript" src="/js/ckeditor/config.js"></script>
+	<script type="text/javascript" src="/admin/dist/js/index2.js"></script>	
+</head>
+<body>
+	<div class="container-fluid bg-dark border-bot-blue">
+		<div class="row ">
+			<div class="col-sm-4">
+				
+			</div>
+			<div class="col-sm-4 line-heightx30">
+                <span class="text-white">{{url}}</span>
+				<!-- Trigger the modal with a button -->
+				<div class="col-sm-4">
+					<div class="col-sm-6">
+				  		<button id="preview" type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal">Vista Previa</button>
+				  	</div>
+				</div>
+				  <!-- Modal -->
+				  <div class="modal fade" id="myModal" role="dialog">
+				    <div class="modal-dialog">
+				    
+				      <!-- Modal content-->
+				      <div class="modal-content">
+				        <div class="modal-header">
+				          <button type="button" class="close" data-dismiss="modal">&times;</button>
+				          <h4 class="modal-title">Vista Previa</h4>
+				        </div>
+				        <div id="modal-preview" class="modal-body text-dark">
+				          <script type="text/javascript">
+				          	$("#preview").click(function(){
+				          		var html = $("#main_content").html();
+				          		console.log(html);
+				          		$("#modal-preview").html(html);
+				          	});
+				          </script>
+				        </div>
+				        <div class="modal-footer">
+				          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+				        </div>
+				      </div>
+				      
+				    </div>
+				  </div>
+			</div>
+			<div class="col-sm-4">
+				<div class="col-sm-6">
+					<a href="/admin/edit/1/Layout/" class="btn btn-sm btn-danger btn-block">
+						<i class="fa fa-times fa-1x"></i> Cancelar
+					</a>
+				</div>
+				<div class="col-sm-6">
+                    <form name="save-template" style="margin:0px; padding: 0xp;">
+                        <input type="hidden" name="name" value="{{url}}">
+                        <input type="hidden" name="idRow" value="{{id}}">
+                        <button class="btn btn-sm btn-success btn-block" type="submit" name="grabar">
+                            <i class="fa fa-save fa-1x"></i> Publicar
+                        </button>
+                    </form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="container-fluid">
+		<div class="row">			
+			<div id="main_content" class="sortable col-sm-12">
+            {{CONTENT|raw}}
+			</div>
+		</div>
+	</div>
+	<div class="container-fluid">
+
+		<!-- botones para desplegar Paneles -->
+		<div id="buttons_container" class="buttons">
+			<div class="row">
+				<div class="col-md-12">
+					<button class="btn btn-primary " data-name="btn_tool" value="true" onclick="openPanel('btn_tool_checked','panel_tool')">
+						<i class="fa fa-cogs fa-2x"></i>
+					</button>
+					<input id="btn_tool_checked" class="hide" type="checkbox" />
+				</div>
+				<div class="col-md-12">
+					<button class="btn btn-primary" data-name="btn_widget" onclick="openPanel('btn_widget_checked','panel_widget')">
+					<i class="fa fa-cog fa-2x"></i>
+					</button>
+					<input id="btn_widget_checked"  class="hide" type="checkbox" />
+				</div>
+			</div>
+		</div>
+
+		<!-- Paneles -->
+		<div data-name="panel_tool" class="panel_tab panel panel-default">
+			<div id="herramientas" class="col-sm-12">
+						<div class="row">
+							<div class="col-md-12">
+								<h4 class="text-center"> <i class="fa fa-cogs"></i> Herramientas
+						<button type="button" class="close text-white pull-right" onclick="openPanel('btn_tool_checked','panel_tool')" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								</h4>		
+							</div>
+						</div>						
+						<hr/>	
+						<div class="row">					
+							<div class="col-sm-12">
+								<span class="label h3">Cuadro de Texto</span>
+								<div data-drag="draggable" class="object col-sm-12">
+									<div class="btn-group" data-rel="editonly">
+										<span onclick="isntanceObject(this,'p')" class="edit btn cursor-p btn-xs btn-default"><i class="fa fa-pencil"></i></span>
+										<span class="move btn cursor-m btn-xs btn-default"><i class="fa fa-arrows"></i></span>
+										<span onclick="DeleteObject(this)" class="delete btn cursor-p btn-xs btn-default"><i class="fa fa-trash"></i></span>
+									</div>
+									<p>parrafo...</p>
+								</div>		
+							</div>
+							<div class="col-sm-12">
+								<span class="label h3">Contenedor vac&iacute;o</span>
+								<div data-drag="draggable" class="object col-sm-12">
+									<div class="btn-group" data-rel="editonly">
+										<span class="move btn cursor-m btn-xs btn-default"><i class="fa fa-arrows"></i></span>
+										<span onclick="DeleteObject(this)"  class="delete btn cursor-p btn-xs btn-default"><i class="fa fa-trash"></i></span>
+									</div>
+									<div class="sortable HG"></div>
+								</div>
+							</div>
+							<div class="col-sm-12">	
+								<span class="label h3">Titulo</span>
+								<div data-drag="draggable" class="object col-sm-12">
+									<div class="btn-group" data-rel="editonly">
+										<span onclick="isntanceObject(this,'p')" class="edit btn cursor-p btn-xs btn-default"><i class="fa fa-pencil"></i></span>
+										<span class="move btn cursor-m btn-xs btn-default"><i class="fa fa-arrows"></i></span>
+										<span onclick="DeleteObject(this)"  class="delete btn cursor-p btn-xs btn-default"><i class="fa fa-trash"></i></span>
+									</div>
+									<p class="title">t&iacute;tulo...</p>
+								</div>	
+							</div>
+							<div class="col-sm-12">
+								<span class="label h3">Panel de Contenido</span>
+								<div data-drag="draggable" class="object col-sm-12">
+									<div class="btn-group" data-rel="editonly">
+										<span class="move btn cursor-m btn-xs btn-default"><i class="fa fa-arrows"></i>
+										</span>  
+										<span onclick="DeleteObject(this)"  class="delete btn cursor-p btn-xs btn-default"><i class="fa fa-trash"></i></span>
+									</div>
+									<div class="panel panel-default">
+										<div class="panel-heading sortable">
+											
+										</div>
+										<div class="panel-body sortable">
+											
+										</div>
+										<div class="panel-footer sortable">
+											
+										</div>
+									</div>
+								</div>	
+							</div>							
+						</div>						
+			</div>
+		</div>
+
+		<div data-name="panel_widget" class="panel_tab panel panel-default">
+			<div id="panel_widget" class="col-sm-12">
+						<div class="row">
+							<div class="col-md-12">
+								<h4 class="text-center"> <i class="fa fa-cog"></i> Widgets
+						<button type="button" class="close text-white" onclick="openPanel('btn_widget_checked','panel_widget')" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								</h4>		
+								<hr/>
+							</div>
+						</div>
+			</div>			
+		</div>
+		
+
+	</div>
+</body>
+</html>

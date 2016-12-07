@@ -10,6 +10,8 @@ class Compiler {
         $this->url = $url;
         $this->edit = $edit;
         $cur = $dbh->query($q = "SELECT idDom FROM template_dom WHERE idTemplate=? or idTemplate=(select id from template where name=?);",array($layout,$url));
+        //print_r($cur);
+        //exit;
         if( !empty($cur) ){
             $doms = array();
             foreach( $cur as $row ){
@@ -21,7 +23,7 @@ class Compiler {
     function getDomsRecursive($id = -1){
         global $dbh;
         $doms = array();
-        if( in_array($id, $this->doms )){
+        if( is_array($this->doms) && in_array($id, $this->doms )){
             $cur = $dbh->query("SELECT * FROM dom WHERE id=?;",array($id));
             if( empty($cur) ){
                 return false;
@@ -119,13 +121,17 @@ class Compiler {
                 $tag .= "/>";
             }
         }
-        $tag .="\n";
-        return $tag;
+        if( isset($tag) ){
+            $tag .="\n";
+            return $tag;
+        }
+        return "";
     }
     public function getCompiledView(){
         global $view;
         //TODO: check if si cached, else create it and save it to file...
         $strHTML = "<!DOCTYPE html>\n".$this->parseRecursive($this->getDomsRecursive());
+        //print_r($strHTML);exit;
         $fileName = $this->url.".phtml";
         $fullPath = PATH."/tmp/";
         $handle = fopen($fullPath.$fileName, "w");

@@ -4,33 +4,56 @@
 			<meta charset="utf-8"/>
 			<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1"/>
-			<title>{{title}}</title>
-			<link href="/css/bootstrap.min.css" rel="stylesheet"/>
-			<link rel="stylesheet" rel="stylesheet"/>
+
+			<link href="/css/less/bootstrap.less?a123=345" rel="stylesheet/less"/>
+			<link href="/css/font-awesome.min.css" rel="stylesheet"/>
 			<link href="/css/styles.css" rel="stylesheet"/>
+			<script src="/js/less.min.js"></script>
 		</head>
 		<body>
-			<nav class="navbar navbar-default navbar-static-top">
-				<div class="container">
-					<div class="navbar-header">
-						<button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-							<span class="sr-only"></span>
-							<span class="icon-bar top-bar"></span>
-							<span class="icon-bar middle-bar"></span>
-							<span class="icon-bar bottom-bar"></span>
-						</button>
-						<a class="navbar-brand" href="/"></a>
-					</div>
-					<div id="navbar" class="navbar-collapse collapse">
-						<ul class="nav navbar-nav">{{MENU|raw}}</ul>
-					</div>
-				</div>
-			</nav>
 			<div class="container">
-				<div id="main-content" class="container-fluid">
-					<div class="row">
-						<h1 class="col-md-12 text-center">Hola Mundo!</h1>
+				<nav class="navbar navbar-default">
+					<div class="container-fluid">
+						<div class="navbar-header">
+							<button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+								<span class="sr-only"></span>
+								<span class="icon-bar top-bar"></span>
+								<span class="icon-bar middle-bar"></span>
+								<span class="icon-bar bottom-bar"></span>
+							</button>
+							<a class="navbar-brand" href="/css/font-awesome.min.css"></a>
+						</div>
+						<div id="navbar" class="navbar-collapse collapse">
+							<ul class="nav navbar-nav">{{MENU|raw}}</ul>
+						</div>
 					</div>
+				</nav>
+				<div id="main-content" class="container-fluid">
+					<p><p></p>
+<p></p>
+
+				
+			<div class="object col-sm-12 ui-resizable ui-draggable ui-draggable-handle ui-draggable-disabled">
+									<div class="btn-group" data-rel="editonly">
+										<span class="move btn cursor-m btn-xs btn-default ui-draggable-handle ui-sortable-handle"><i class="fa fa-arrows"></i></span>
+										<span onclick="DeleteObject(this)" class="delete btn cursor-p btn-xs btn-default"><i class="fa fa-trash"></i></span>
+									</div>
+									<div class="sortable HG ui-sortable"><div class="object col-sm-12 ui-resizable ui-draggable-disabled">
+									<div class="btn-group" data-rel="editonly">
+										<span onclick="isntanceObject(this,'p')" class="edit btn cursor-p btn-xs btn-default"><i class="fa fa-pencil"></i></span>
+										<span class="move btn cursor-m btn-xs btn-default ui-draggable-handle ui-sortable-handle"><i class="fa fa-arrows"></i></span>
+										<span onclick="DeleteObject(this)" class="delete btn cursor-p btn-xs btn-default"><i class="fa fa-trash"></i></span>
+									</div>
+									<p class="title cke_editable cke_editable_inline cke_contents_ltr cke_show_borders" tabindex="0" spellcheck="false" style="position: relative;" role="textbox" aria-label="Editor de texto enriquecido, editor3" title="Editor de texto enriquecido, editor3" aria-describedby="cke_88" contenteditable="false"><span style="color:#0000ff;"><span style="font-size: 28px;">Título...</span></span><br></p>
+								<div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div></div><div class="object ui-resizable col-sm-12">
+									<div class="btn-group" data-rel="editonly">
+										<span onclick="isntanceObject(this,'p')" class="edit btn cursor-p btn-xs btn-default"><i class="fa fa-pencil"></i></span>
+										<span class="move btn cursor-m btn-xs btn-default ui-draggable-handle ui-sortable-handle"><i class="fa fa-arrows"></i></span>
+										<span onclick="DeleteObject(this)" class="delete btn cursor-p btn-xs btn-default"><i class="fa fa-trash"></i></span>
+									</div>
+									<p style="position: relative;" contenteditable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<br></p>
+								<div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div></div></div>
+								<div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div></div></p>
 				</div>
 			</div>
 			<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>

@@ -204,8 +204,11 @@ hr {
 .goright {
 	text-align: right;
 }
+#nav-accordion h5.centered {
+    margin-bottom: 25px;
+}
 
-.mt {
+.mt:first-child {
 	margin-top: 25px;
 }
 

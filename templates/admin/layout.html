@@ -64,12 +64,12 @@
                         <span>{{ class.name|raw }}</span><span class="caret"></span>
                     </a>
                     <ul class="sub">
-                    {% for nav in class.navs %}
-                    <li><a data-rel="#nav={{ nav.id }}">{{nav.description}} {{ nav.name|raw }}.html</a></li>
-                    {% endfor %}
-                        <li><a class="link-more" data-rel="#"> + Agregar Vista ..</a></li>
+                        {% for nav in class.navs %}
+                        <li><a href="#nav={{ nav.id }}/{{nav.name}}">/{{ nav.name|raw }}</a></li>
+                        {% endfor %}
+                        <!-- <li><a class="link-more" data-rel="#"> + Agregar Vista ..</a></li> -->
                     </ul>
-                  </li>
+                </li>
                 {% else %}
                 <li class="mt">
                     <a {% if class.current %} class="active"{% endif %} href="/{{ class.url }}">
@@ -102,6 +102,7 @@
     <script src="/admin/dist/js/jquery.nicescroll.js" type="text/javascript"></script>
     <!-- common script for all pages-->
     <script src="/admin/dist/js/common-scripts.js"></script>
+    <script src="/js/jscolor.min.js"></script>
     <script src="/js/spin.min.js"></script>
     <script type="text/javascript">
     var spinnerOpts = {
@@ -141,12 +142,16 @@
     }
     </script>
     <script type="text/javascript">
-      $('#sidebar .sidebar-menu > li > a, #sidebar > .sidebar-menu > .sub-menu > ul > li > a').click(function () {
-
-        var url = $(this).attr("data-rel");
-        $("#frameObject").attr("src",url);
-        console.log(url);
-      });
+    (function($){
+        $(window).on("hashchange",function (e) {
+            var hash = (window.location.hash).substr(1);
+            var tmp = hash.split("=");
+            if( tmp[0]=='nav' ){
+                var id = tmp[1];
+                window.location.href="/admin/edit/"+id+"/";
+            }
+        });
+    })(jQuery);
     </script>
   </body>
 </html>

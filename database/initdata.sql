@@ -12,8 +12,6 @@ INSERT INTO dom(id,type,domId,className,closeTag,parentDom,domOrder) VALUES
 (10,'div','main-content','container-fluid',true,8,0.2),
 (11,'script','','',true,2,0.97),
 (12,'script','','',true,2,0.97),
-(13,'div','','row',true,10,0.1),
-(14,'h1','','col-md-12 text-center',true,13,0.1),
 (15,'div','','container-fluid',true,9,0.1),
 (16,'div','','navbar-header',true,15,0.1),
 (17,'div','navbar','navbar-collapse collapse',true,15,0.1),
@@ -50,7 +48,8 @@ INSERT INTO dom(id,type,domId,className,closeTag,parentDom,domOrder) VALUES
 (48,'span','','icon-bar bottom-bar',true,44,0.4),
 (49,'a','','navbar-brand',true,42,0.2),
 (50,'ul','','nav navbar-nav',true,43,0.1),
-(51,'link','','',false,1,0.99);
+(51,'link','','',false,1,0.99),
+(52,'script','','',true,1,0.7);
 -- GO
 INSERT INTO atribute(id,name,value) VALUES
 (1,'lang','es'),
@@ -59,8 +58,8 @@ INSERT INTO atribute(id,name,value) VALUES
 (4,'content','IE=edge'),
 (5,'name','viewport'),
 (6,'content','width=device-width, initial-scale=1'),
-(7,'href','/css/bootstrap.min.css'),
-(8,'rel','stylesheet'),
+(7,'href','/css/less/bootstrap.less?a123=345'),
+(8,'rel','stylesheet/less'),
 (9,'src','https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js'),
 (10,'src','/js/bootstrap.min.js'),
 (11,'type','button'),
@@ -82,7 +81,8 @@ INSERT INTO atribute(id,name,value) VALUES
 (27,'aria-controls','navbar'),
 (28,'href','/'),
 (29,'href','/css/fixed-menu.css'),
-(30,'rel','stylesheet');
+(30,'rel','stylesheet'),
+(31,'src','/js/less.min.js');
 -- GO
 INSERT INTO dom_atribute(idDom,idAtribute) VALUES
 (3,2),
@@ -100,8 +100,8 @@ INSERT INTO dom_atribute(idDom,idAtribute) VALUES
 (18,14),
 (18,15),
 (23,17),
+(25,17),
 (25,19),
-(25,20),
 (26,18),
 (26,20),
 (27,21),
@@ -119,14 +119,17 @@ INSERT INTO dom_atribute(idDom,idAtribute) VALUES
 (44,27),
 (49,28),
 (51,29),
-(51,30);
+(51,30),
+(52,31);
 -- GO
 INSERT INTO template(id, name, description) VALUES
-(-1, 'layout', 'Layout por Defecto.'),
-(-2, 'layout', 'Menú Estático.'),
-(-3, 'layout', 'Menú Fijo.'),
+(-1, 'L1', 'Layout por Defecto.'),
+(-2, 'L2', 'Menú Estático.'),
+(-3, 'L3', 'Menú Fijo.'),
 (1, 'Layout', 'Layout del Sitio'),
-(2, 'home', 'Home del sitio.');
+(2, 'home', 'Home del sitio.'),
+(3, 'nosotros', 'P&aacute;gina de Informaci&oacute;n.'),
+(4, 'contacto', 'P&aacute;gina de Contacto.');
 -- GO
 INSERT INTO template_dom(idTemplate, idDom) VALUES
 (-1,-1),
@@ -156,6 +159,7 @@ INSERT INTO template_dom(idTemplate, idDom) VALUES
 (-1,26),
 (-1,27),
 (-1,28),
+(-1,52),
 (-2,-1),
 (-2,1),
 (-2,2),
@@ -183,6 +187,7 @@ INSERT INTO template_dom(idTemplate, idDom) VALUES
 (-2,26),
 (-2,27),
 (-2,28),
+(-2,52),
 (-3,-1),
 (-3,1),
 (-3,2),
@@ -211,8 +216,7 @@ INSERT INTO template_dom(idTemplate, idDom) VALUES
 (-3,27),
 (-3,28),
 (-3,51),
-(2,13),
-(2,14);
+(-3,52);
 -- GO
 INSERT INTO section(id,name,parentSection,sectionOrder,active) VALUES
 (-1,'Home',-1,0.00,true),
@@ -221,23 +225,20 @@ INSERT INTO section(id,name,parentSection,sectionOrder,active) VALUES
 -- GO
 INSERT INTO text(id,name,body) VALUES
 (1,'Menu','{{MENU|raw}}'),
-(2,'Titulo','{{title}}'),
-(3,'Saludos','Hola Mundo!');
+(2,'Titulo','{{title}}');
 -- GO
 INSERT INTO content(id,name,url,tableName,keyName,keyValue) VALUES
 (1,'Menu Home','/','text','id','1'),
 (2,'Titulo Sitio','/','text','id','2'),
 (3,'Home','/home','section','id','-1'),
 (4,'Nosotros','/nosotros','section','id','1'),
-(5,'Contacto','/contacto','section','id','2'),
-(6,'Texto Bienvenida','home','text','id','3');
+(5,'Contacto','/contacto','section','id','2');
 -- GO
 INSERT INTO content_dom(idContent,idDom) VALUES
 (1,24),
 (1,39),
 (1,50),
-(2,6),
-(6,14);
+(2,6);
 INSERT INTO usuario(username, password, cookie, active) VALUES('admin','admin','',1);
 INSERT INTO config(name,value,type) VALUES
 ('Nombre del Sitio','Doit CMS','text'),
@@ -250,4 +251,8 @@ INSERT INTO config(name,value,type) VALUES
 ('URL de Facebook','http://facebook.com','text'),
 ('URL de Twitter','http://twitter.com','text'),
 ('URL de Instragram','http://instagram.com','text'),
-('layout','-1','layout');
+('layout','-1','layout'),
+('background','#ffffff','color'),
+('primary','#f8f8f8','color'),
+('secondary','#e7e7e7','color'),
+('accent','#449d44','color');

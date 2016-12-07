@@ -75,6 +75,15 @@ if( isset($_POST['action']) ){
                 $retval['errorInfo'] = $dbh->errorInfo();
         }
         break;
+    case 'update-layout':
+        if( isset($_POST['id']) ){
+            $id = $_POST['id'];
+            $cur = $dbh->query("UPDATE config SET value=? WHERE name='layout';", array($id));
+            $retval['ok'] = $cur!== false;
+        }
+        break;
+    case 'save-theme':
+        break;
     }
     print json_encode($retval);
     exit;
