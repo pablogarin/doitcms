@@ -164,7 +164,6 @@
             var description = $("a[href='#"+hash+"']").attr("data-description");
             var parentS = $("a[href='#"+hash+"']").attr("data-parent");
             var order   = $("a[href='#"+hash+"']").attr("data-order");
-            window.location.hash = "#";
             switch(action){
             case 'edit':
                 $("form[name='edit-form'] input[name='name']").val(name)
@@ -175,6 +174,7 @@
                 $(".edit-label").removeClass('hide');
                 $(".new-label").addClass('hide');
                 $("#modal-edit").modal();
+                window.location.hash = "#";
                 break;
             case 'child':
                 $("form[name='edit-form'] input[name='name']").val("")
@@ -185,6 +185,7 @@
                 $(".edit-label").addClass('hide');
                 $(".new-label").removeClass('hide');
                 $("#modal-edit").modal();
+                window.location.hash = "#";
                 break;
             case 'page':
                 $("form[name='page-form'] input[name='name']").val(url).attr("disabled",true)
@@ -194,6 +195,7 @@
                 }
                 $("form[name='page-form'] select[name='section']").val(id).attr("disabled",true)
                 $("#modal-page").modal();
+                window.location.hash = "#";
                 break;
             case 'activate':
                 showSpinner();
@@ -215,7 +217,9 @@
                     }, 
                     error   : function(){
                     }
-                })
+                }).done(function(){
+                        window.location.hash = "#";
+                    });
                 break;
             case 'delete':
                 var r = confirm("¿Seguro desea borrar el registro?");
@@ -242,9 +246,12 @@
                         }, 
                         error   : function(){
                         }
-                    })
+                    }).done(function(){
+                        window.location.hash = "#";
+                    });
                 }
                 break;
+            }
         });
         $("body").on("submit", "form[name='edit-form']", function(e){
                 e.preventDefault();
@@ -272,7 +279,9 @@
                     }, 
                     error   : function(){
                     }
-                })
+                }).done(function(){
+                        window.location.hash = "#";
+                    });
         })
         $("body").on("submit", "form[name='page-form']", function(e){
                 e.preventDefault();
@@ -301,7 +310,9 @@
                     }, 
                     error   : function(){
                     }
-                })
+                    }).done(function(){
+                        window.location.hash = "#";
+                    });
         })
         function reset(){
             $("form[name='edit-form'] input[name='name']").val("")
@@ -315,6 +326,7 @@
             $("#main-content").load("/admin/secciones #main-content>*",null,function(){
                     showSpinner();
             });
+            window.location.hash = "#";
         }
         function reloadMenu(){
             $("#nav-accordion").load("/admin/secciones #nav-accordion>*",null,function(){});

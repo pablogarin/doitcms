@@ -43,6 +43,7 @@ $configs = array();
 foreach( $cur as $row ){
     if( $row['name']=="layout" ){
         define("LAYOUT", $row['value']);
+        $view->set("layoutId", LAYOUT);
     }
     if( $row['name']=="Nombre del Sitio" ){
         define("TITLE", $row['value']);
@@ -78,10 +79,12 @@ function readSections($start=null, $limit = 1){
                         if( !empty($cont) ){
                             $row['url'] = $cont[0]['url'];
                         }
+                        /*
                         $temp = $dbh->query("SELECT * FROM template WHERE name=?;",array(str_replace("/","",$row['url'])));
                         if( !empty($temp) ){
                             $row['description'] = $temp[0]['description'];
                         }
+                        //*/
                         $childs = readSections($row['id'], $limit+1);
                         if( !empty($childs) ){
                             $row['childs'] = $childs;

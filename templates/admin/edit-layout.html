@@ -1,0 +1,157 @@
+<div class="container-fluid">
+    <div class="row">
+        <h3><i class="fa fa-eye"></i> Layout del Sitio</h3>
+    </div><!-- /.row -->
+    <div class="row">
+        <p>
+            <strong>Seleccione el comportamiento que desea para el men&uacute;:</strong>
+        </p>
+    </div><!-- /.row -->
+    <div class="row">
+        <div class="col-md-4 text-center">
+            <div class="cropped">
+                <img src="/img/menu-estandar.png" alt="">
+            </div>
+            <h4>{% if layoutId==-1 %}<i class="fa fa-check"></i> {% endif %}Men&uacute; Est&aacute;ndar</h4>
+            <a href="/admin/preview/-1/" target="_blank" class="btn btn-default"><i class="fa fa-eye"></i> Ver</a>
+            <a href="#update-layout=-1" class="btn btn-default"><i class="fa fa-check-square-o"></i> Elegir</a>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="cropped">
+                <img src="/img/menu-estatico.png" alt="">
+            </div>
+            <h4>{% if layoutId==-2 %}<i class="fa fa-check"></i> {% endif %}Men&uacute; Est&aacute;tico</h4>
+            <a href="/admin/preview/-2/" target="_blank" class="btn btn-default"><i class="fa fa-eye"></i> Ver</a>
+            <a href="#update-layout=-2" class="btn btn-default"><i class="fa fa-check-square-o"></i> Elegir</a>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="cropped">
+                <img src="/img/menu-fijo.png" alt="">
+            </div>
+            <h4>{% if layoutId==-3 %}<i class="fa fa-check"></i> {% endif %}Men&uacute; Fijo</h4>
+            <a href="/admin/preview/-3/" target="_blank" class="btn btn-default"><i class="fa fa-eye"></i> Ver</a>
+            <a href="#update-layout=-3" class="btn btn-default"><i class="fa fa-check-square-o"></i> Elegir</a>
+        </div>
+    </div><!-- /.row -->
+    <hr class="divider"/>
+    <form name="styles" method="POST">
+        <div class="row" style="margin-top:20px;">
+            <p>
+                <strong>Seleccione los Colores para identificar su marca y sitio:</strong>
+            </p>
+        </div><!-- /.row -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="colorpicker"></div>
+                <button class="btn btn-default jscolor {valueElement:'chosen-value', onFineChange:'setTextColor(this)',value:'{{colors['bg-color']}}'}">Color de Fondo</button>
+                <input type="hidden" name="bg-color" value="{{ colors['bg-color'] }}">
+            </div>
+            <div class="col-md-3">
+                <div class="colorpicker"></div>
+                <button class="btn btn-default jscolor {valueElement:'chosen-value', onFineChange:'setTextColor(this)',value:'{{colors['brand-primary']}}'}">Color Principal</button>
+                <input type="hidden" name="brand-primary" value="{{ colors['brand-primary'] }}">
+            </div>
+            <div class="col-md-3">
+                <div class="colorpicker"></div>
+                <button class="btn btn-default jscolor {valueElement:'chosen-value', onFineChange:'setTextColor(this)',value:'{{colors['brand-info'] }}'}">Color Secundario</button>
+                <input type="hidden" name="brand-info" value="{{ colors['brand-info'] }}">
+            </div>
+            <div class="col-md-3">
+                <div class="colorpicker"></div>
+                <button class="btn btn-default jscolor {valueElement:'chosen-value', onFineChange:'setTextColor(this)',value:'{{colors['brand-success']}}'}">Color Resaltado</button>
+                <input type="hidden" name="brand-success" value="{{ colors['brand-success'] }}">
+            </div>
+        </div><!-- /.row -->
+        <hr class="divider"/>
+        <div class="row" style="margin-top:20px;">
+            <p>
+                <strong>Configuraciones para Texto y Botones:</strong>
+            </p>
+        </div><!-- /.row -->
+        <div class="row">
+            <div class="form-group">
+                <label for="page-font">Fuente del Sitio</label>
+                <select name="font" id="page-font" class="form-control">
+                </select>
+            </div>
+        </div><!-- /.row -->
+        <hr class="divider"/>
+        <div class="row" style="margin-top:60px;">
+            <button type="submit" name="grabar" class="btn btn-success col-md-4 col-md-offset-4">Grabar</button>
+        </div><!-- /.row -->
+    </form>
+</div><!-- /.container-fluid -->
+<script type="text/javascript">
+    function setTextColor(dom){
+        var Element = $(dom.targetElement);
+        color = Element.css("background-color");
+        Element.siblings("input[type=hidden]:first").val(color);;
+    }
+    (function($){
+        var fonts = [];
+        var APIKey = "AIzaSyAsp8NlkWZFOLWrgnle9QZAM4dAQ7lWtyw";
+        $.ajax({
+            url     : 'https://www.googleapis.com/webfonts/v1/webfonts?key='+APIKey,
+            success : function(data){
+                if( typeof data.items !== 'undefined' ){
+                    fonts = data.items;
+                    $.each(fonts, function(k,v){
+                        var option = document.createElement('option');
+                        option.value = k;
+                        option.appendChild(document.createTextNode(v.family));
+                        $("select#page-font").append(option);
+                    });
+                }
+            }
+        });
+        $("form[name='styles']").on("submit", function(e){
+            e.preventDefault();
+            var form = $(this);
+            var index = form.find("[name='font']").val();
+            var font = fonts[index];
+            var data = {
+                action  : 'save-theme',
+                font    : font.files,
+                grabar  : 1
+            }
+            form.find("input[type=hidden]").each(function(k,v){
+                data[v.name] = v.value;
+            });
+            showSpinner();
+            $.ajax({
+                url     : '/admin/edit/1/Layout/',
+                data    : data,
+                type    : 'POST',
+                success : function(data){
+                    if( typeof data.ok !== 'undefined' && data.ok ){
+                        alert("Datos grabados.");
+                        showSpinner();
+                    } else {
+                        alert("Ocurrio un error. Por favor revise los datos e intente nuevamente.");
+                    }
+                }
+            });
+        });
+        $(window).on("hashchange", function(){
+            var hash = (window.location.hash).substr(1);
+            var tmp = hash.split("=");
+            if( tmp[0]=='update-layout' ){
+                var data = {
+                    action:'update-layout',
+                    id:tmp[1]
+                };
+                window.location.hash="";
+                $.ajax({
+                    url     : '/admin/service',
+                    data    : data,
+                    type    : 'POST',
+                    success : function(data){
+                        if(data.ok){
+                            $("#main-content").load("/admin/edit/1/Layout/ #main-content > *");
+                        }
+                    }
+                });
+            }
+        });
+    })(jQuery);
+</script>

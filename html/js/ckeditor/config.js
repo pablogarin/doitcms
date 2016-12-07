@@ -16,3 +16,6 @@ CKEDITOR.editorConfig = function( config ) {
     ];
     config.font_defaultLabel = "Libre Baskerville";
 };
+CKEDITOR.dtd.$editable.span = 0
+CKEDITOR.dtd.$editable.label = 1
+CKEDITOR.dtd.$editable.a = 1

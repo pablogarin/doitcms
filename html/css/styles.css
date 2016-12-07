@@ -1,4 +1,11 @@
 * {
+    font-family: mainFont !important;
+}
+.object {
+    border-width:0px;
+}
+div[data-rel='editonly'] {
+    display:none;
 }
 
 @media (max-width: 767px) {
@@ -35,4 +42,8 @@
     }
     .navbar-toggle .icon-bar.collapsed {
     }
+}
+@font-face {
+    font-family: mainFont;
+    src: url(./fonts/main-regular.ttf);
 }

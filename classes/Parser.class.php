@@ -3,7 +3,7 @@ namespace classes;
 class Parser {
     private $htmlString;
     private $doc;
-    private $closedTags = array("a", "img", "meta", "link");
+    private $closedTags = array("a", "img", "meta", "link", "br", "hr");
 
     function __construct($htmlString)
     {

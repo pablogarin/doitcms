@@ -20,14 +20,14 @@
                 <tr>
                     <td>{{conf.name|raw}}</td>
                     <td>
-                        <input type="{{conf.type}}" name="conf[{{conf.id}}]" value="{{conf.value}}" id="config-{{conf.id}}">
+                        <input type="{{conf.type}}" name="conf[{{conf.id}}]" value="{{conf.value}}" id="config-{{conf.id}}" class="form-control">
                     </td>
                 </tr>
                         {% elseif conf.type=='select' %}
                 <tr>
                     <td>{{conf.name|raw}}</td>
                     <td>
-                        <select name="conf[{{conf.id}}]">
+                        <select name="conf[{{conf.id}}]" class="form-control">
                             {% for option in conf.options %}
                             <option value="{{option}}">{{option|upper}}</option>
                             {% endfor %}
