@@ -5,17 +5,12 @@
 
 CKEDITOR.editorConfig = function( config ) {
 	// Define changes to default configuration here. For example:
-	// config.language = 'fr';
-	// config.uiColor = '#AADC6E';
-    config.uploadUrl = "/ajax/uploadImage.php";
-    config.uploadImage = "/ajax/uploadImage.php";
-    config.toolbar = [
-        ['FontSize','Bold','Italic','Underline','CreateDiv'],
-        ['NumberedList','BulletedList','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-        ['Image','Link','TextColor','BGColor']
-    ];
+	config.language = 'es';
+	config.uiColor = '#333';
+    config.toolbar = 'basic';
     config.font_defaultLabel = "Libre Baskerville";
 };
+
 CKEDITOR.dtd.$editable.span = 0
 CKEDITOR.dtd.$editable.label = 1
 CKEDITOR.dtd.$editable.a = 1
