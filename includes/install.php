@@ -1,4 +1,5 @@
 <?php
+//exit(phpinfo());
 if( !file_exists(PATH.'/configs/database.conf') ){
     if( isset($_REQUEST['grabar']) ){
         // save database data to a config file for future reference

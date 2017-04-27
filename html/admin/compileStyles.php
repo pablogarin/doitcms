@@ -1,4 +1,4 @@
-<?
+<?php
 require "lessphp/lessc.inc.php";
 $colors = array("background"=>"bg-color", "primary"=>"brand-primary", "secondary"=>"brand-info", "accent"=>"brand-success");
 $less = new lessc;

@@ -6,7 +6,7 @@ body {
 	overflow-y: hidden;
 }
 p  {
-    margin: 0 0 5px !important;
+    margin: 0 0 5px;
 }
 
 .text-white {
@@ -85,11 +85,20 @@ p  {
     overflow-y: scroll;
 }
 #main_content .object {
-	border:1px dashed #333;
-	/*padding: 5px;
-	line-height: 20px;
-	margin-bottom: 5px;
-	float: left;*/
+	transition: shadow-box 0.3s ease;
+}
+#main_content .object.focused {
+	border:1px solid rgba(0,0,0,0.3);
+	margin: -1px;
+	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+#main_content .object .btn-group {
+	position: absolute;
+	display:none;
+	height: 0px;
+}
+#main_content .object.active > .btn-group:first-child {
+	display:inline-block;
 }
 #herramientas  .object {
 	border: 1px solid #f2f2f2;
@@ -138,7 +147,7 @@ p  {
 }
 
 #main_content  .object > .btn-group {
-	position: relative;
+	/*position: relative;*/
 	top: -15px;
 	left: 45%;
 }
@@ -196,4 +205,25 @@ p  {
 @font-face {
     font-family: mainFont;
     src: url(/css/fonts/main-regular.ttf);
+}
+#contextualmenu {
+	position: absolute;
+	background-color: white; 
+	border-radius: 3px;
+  	box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+	padding: 5px 15px;
+}
+#contextualmenu ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+#contextualmenu ul li {
+	padding: 0 5px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+#contextualmenu ul li:hover {
+	background: rgba(0,0,175,0.6);
+	color: white;
 }

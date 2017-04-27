@@ -56,6 +56,38 @@ var resizableOptions = {
 		    }
 		};
 
+var editableStyles = {
+	margin:{
+		label	 : 'Margenes',
+		property : 'margin',
+		value 	 : 0,
+		control	 : 'text'
+	},
+	height:{
+		label	 : 'Alto',
+		property : 'height',
+		value 	 : 0,
+		control	 : 'text'
+	},
+	fontSize:{
+		label	 : 'Tamaño de Fuente',
+		property : 'fontSize',
+		value	 : '12px',
+		control	 : 'text'
+	},
+	fontWeight:{
+		label	 : 'Resaltado de Fuente',
+		property : 'fontWeight',
+		value	 : '12px',
+		control	 : 'select[Liviano=light|Normal=normal|Negrita=Bold]'
+	},
+	backgroundColor:{
+		label	 : 'Color de Fondo',
+		property : 'backgroundColor',
+		value	 : 'transparent',
+		control	 : 'text'
+	}
+}
 $( function() {
 	$( '*[data-drag="draggable"]' ).draggable({
 	  connectToSortable: ".sortable",
@@ -97,6 +129,52 @@ $( function() {
         }).done(function(){
             //showSpinner();
         });;
+    });
+    $(".object").on("mouseover", function(e){
+	$($(this).parent()).removeClass('focused');
+	$(this).addClass('focused');
+	e.stopPropagation();
+    }).on("click", function(e){
+	e.stopPropagation();
+	if( $(this).hasClass('active') ){
+		$(this).removeClass('active');
+	} else {
+		$(this).addClass('active');
+	}
+    }).on("mouseout", function(){
+	$(this).removeClass('focused');
+    }).on("contextmenu", function(e){
+	e.preventDefault();
+	var _self = e.target;
+	var menu = $("#contextualmenu");
+	menu.find("*").on("contextmenu", function(e){
+		e.preventDefault();
+	});
+	var y = e.pageY;
+	var x = e.pageX;
+	menu.css({'left':x, 'top': y})
+	    .find('ul li').remove();
+	var list = $(menu.find('ul'));
+	$.each(editableStyles, function(k,v){
+		var value = $(_self).css(v.property) || v.value;
+		var listItem = document.createElement('li');
+		listItem.appendChild(document.createTextNode(v.label+': '+value));
+		listItem.onclick = function(){
+			var newVal = prompt('ingrese un valor:') || value;
+			var prop = v.property;
+			_self.style[prop] = newVal;
+			$(this).text(v.label+': '+newVal)
+		}
+		list.append(listItem);
+	});
+	menu.show();
+        $("body").on("mousedown.contextmenu", function(e){
+		var target = e.target;
+		if( !menu.is(target) && menu.has(target).length===0 ){
+			$("body").off("mousedown.contextmenu");
+			menu.hide();
+		}
+        });
     });
 });
 
